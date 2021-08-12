@@ -11,31 +11,39 @@ const routes = [
   // 重定向路由
   {
     path: "*",
-    redirect: { name: "home" },
+    redirect: { name: "index" },
   },
   {
     path: "/",
     name: "layout",
-    redirect: { name: "home" },
+    redirect: { name: "index" },
     component: Layout,
     children: [
       {
-        path: "/home",
-        name: "home",
-        meta: { title: "首页" },
-        component: () => import("views/home/Home.vue"),
+        path: "/index",
+        name: "index",
+        meta: { title: "后台首页" },
+        component: () => import("views/index/Index.vue"),
         // component: "home/home",
       },
       {
-        path: "/good_list",
-        name: "good_list",
+        path: "shop/goods/list",
+        name: "shop_goods_list",
+        meta: { title: "商品列表" },
         component: () => import("views/shop/goods/List.vue"),
+      },
+      {
+        path: "image/index",
+        name: "image",
+        meta: { title: "相册管理" },
+        component: () => import("views/image/index.vue"),
       },
     ],
   },
   {
     path: "/login",
     name: "login",
+    meta: { title: "登录页" },
     component: () => import("@/views/login/Login.vue"),
   },
 ];

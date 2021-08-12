@@ -6,7 +6,7 @@
       <el-col :xs="14" :sm="10" :md="13" :lg="6" :xl="6">
         <el-card class="box-card">
           <div slot="header" class="card-header">
-            <h3 style="color: slategray;">UNI-ADMIN</h3>
+            <h3 style="color: slategray;">{{ $conf.logo }}</h3>
           </div>
           <div class="card-body">
             <el-form ref="form" :model="form" :rules="rules">
