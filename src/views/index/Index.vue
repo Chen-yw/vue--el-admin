@@ -61,7 +61,7 @@
     </el-row>
 
     <!-- 销售情况统计 | 单品销售排名 -->
-    <el-row :gutter="20" style="margin-top: 15px ">
+    <el-row :gutter="20" class="my-3">
       <!-- 销售情况统计 -->
       <el-col :span="12">
         <el-card class="box-card" shadow="never">
@@ -71,17 +71,21 @@
               sales.desc
             }}</el-button>
           </div>
-          <div class="media" v-for="(tab, index) in sales.tabs" :key="index">
-            <span class="border">{{ tab.name }}</span>
+          <div
+            class="media align-items-center border  mb-3 "
+            v-for="(tab, index) in sales.tabs"
+            :key="index"
+          >
+            <span class="border-right py-5 px-3 bg-light">{{ tab.name }}</span>
             <div class="media-body">
-              <div class="msg">
-                <span>{{ tab.order }}</span
-                >{{ tab.ocount }}
+              <!-- <div class="msg"> -->
+              <div class="border-bottom pl-3 py-3">
+                <span>{{ tab.order }}</span> {{ tab.ocount }}
               </div>
-              <div class="line"></div>
-              <div class="msg">
-                <span>{{ tab.amount }}</span
-                >{{ tab.acount }}
+              <!-- <div class="line"></div> -->
+              <!-- <div class="msg"> -->
+              <div class="pl-3 py-3">
+                <span>{{ tab.amount }}</span> {{ tab.acount }}
               </div>
             </div>
           </div>
@@ -97,7 +101,7 @@
               >按周期统计商家店铺的订单量和订单金额</el-button
             >
           </div>
-          <el-table :data="tableData" height="320" border style="width: 100%">
+          <el-table :data="tableData" height="275" border style="width: 100%">
             <el-table-column type="index" label="#" width="50">
             </el-table-column>
             <el-table-column prop="name" label="商品信息"> </el-table-column>
@@ -389,7 +393,7 @@ h4 {
   padding-bottom: 5px;
 }
 
-.media {
+/* .media {
   display: flex;
   align-items: center;
   margin-top: 15px;
@@ -411,5 +415,5 @@ h4 {
 .line {
   width: 100%;
   border-bottom: 0.1px solid #c6c9cc;
-}
+} */
 </style>

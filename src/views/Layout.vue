@@ -131,6 +131,13 @@ export default {
   methods: {
     headerSelect(key, keyPath) {
       console.log(key, keyPath);
+      if (key === "100-1") {
+        return console.log("修改资料");
+      }
+      if (key === "100-2") {
+        return console.log("退出登录");
+      }
+
       this.navBar.active = key;
       // 默认跳转到对应 asideSelect 的第一个
       this.slideMenusActive = "0";
