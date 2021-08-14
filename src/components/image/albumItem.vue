@@ -1,10 +1,8 @@
 <template>
   <li
     class="list-group-item list-group-item-action d-flex align-items-center"
-    v-for="(item, index) in albums"
-    :key="index"
     @click.stop="albumChange(index)"
-    :class="'active sum-active': albumIndex === index"
+    :class="{ 'active sum-active': active }"
     style="cursor: pointer;"
   >
     {{ item.name }}
@@ -28,47 +26,30 @@
 export default {
   name: "albumItem",
   props: {
-    albums: {
-      type: Array,
-      default: [],
+    item: Object,
+    index: Number,
+    active: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {};
   },
   methods: {
-    // albumChange(index) {
-    //   this.$emit("albumChange", index);
-    // },
     // 切换相册
     albumChange(index) {
-      this.albumIndex = index;
+      this.$emit("albumChange", index);
     },
-    openAlbumModel(obj) {
-      this.$emit("openAlbumModel", obj);
+
+    // 打开修改或者创建相册的模态框
+    openAlbumModel({ item, index }) {
+      this.$emit("openAlbumModel", { item, index });
     },
 
     // 删除相册并弹出提示弹框
     albumDel(index) {
-      this.$confirm("是否永久删除该相册?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-          // 删除相册
-          this.albums.splice(index, 1);
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
+      this.$emit("albumDel", index);
     },
   },
 };
