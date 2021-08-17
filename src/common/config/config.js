@@ -29,13 +29,25 @@ export default {
         submenuActive: "0",
         submenu: [
           {
-            icon: "",
-            name: "商品列表1",
-            pathname: "shop_goods_list",
+            icon: "el-icon-s-order",
+            name: "商品列表",
+            pathname: "shop_goods_create",
           },
           {
-            icon: "",
-            name: "商品列表2",
+            icon: "el-icon-picture",
+            name: "商品分类",
+          },
+          {
+            icon: "el-icon-help",
+            name: "商品规格",
+          },
+          {
+            icon: "el-icon-s-help",
+            name: "商品类型",
+          },
+          {
+            icon: "el-icon-s-comment",
+            name: "商品评论",
           },
         ],
       },

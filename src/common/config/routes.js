@@ -33,6 +33,12 @@ const routes = [
         component: () => import("views/shop/goods/List.vue"),
       },
       {
+        path: "shop/goods/create",
+        name: "shop_goods_create",
+        meta: { title: "创建商品" },
+        component: () => import("views/shop/goods/Create.vue"),
+      },
+      {
         path: "image/index",
         name: "image",
         meta: { title: "相册管理" },
