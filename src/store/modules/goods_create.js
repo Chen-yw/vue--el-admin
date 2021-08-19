@@ -41,19 +41,28 @@ export default {
           },
         ],
       },
+      {
+        name: "大小", // 规格名称
+        type: 0, // 规格类型 0无 1颜色 2图片
+        // 规格属性列表
+        list: [
+          {
+            name: "XL",
+            color: "",
+            image: "",
+          },
+          {
+            name: "XXL",
+            color: "",
+            image: "",
+          },
+        ],
+      },
     ],
-
-    goods_type_id: "", // 商品类型
-    discount: 0, // 折扣
-
-    // 商品属性
-    goods_attrs: {
-      phone_model: "",
-    },
 
     // 表头
     ths: [
-      { name: "商品规格", rowspan: 1, colspan: 1, width: "" },
+      { name: "商品规格", rowspan: 1, colspan: 1, width: "100" },
       { name: "sku图片", rowspan: 2, width: "60" },
       { name: "销售价", rowspan: 2, width: "100" },
       { name: "市场价", rowspan: 2, width: "100" },
@@ -63,8 +72,64 @@ export default {
       { name: "重量", rowspan: 2, width: "100" },
       { name: "编码", rowspan: 2, width: "100" },
     ],
+
+    goods_type_id: "", // 商品类型
+    discount: 0, // 折扣
+
+    // 商品属性
+    goods_attrs: {
+      phone_model: "",
+    },
   },
-  getters: {},
+  getters: {
+    // 获取表格中的规格卡片名称,当规格卡片中没有属性时，不在表格中显示
+    skuLabels(state) {
+      return state.sku_card.filter((v) => {
+        return v.list.length > 0;
+      });
+    },
+
+    // 获取表头
+    tableThs(state, getters) {
+      length = getters.skuLabels.length;
+      state.ths[0].colspan = length;
+      state.ths[0].rowspan = length > 0 ? 1 : 2;
+      return state.ths;
+    },
+    tableData(state) {
+      // 当前是否有规格卡片
+      if (state.sku_card.length === 0) {
+        return [];
+      } else {
+        let sku_list = [];
+        for (let i = 0; i < state.sku_card.length; i++) {
+          if (state.sku_card[i].list.length > 0) {
+            sku_list.push(state.sku_card[i].list);
+          }
+        }
+        if (sku_list.length === 0) {
+          return [];
+        } else {
+          let arr = $Util.cartesianProductOf(...sku_list);
+          return arr.map((v) => {
+            let obj = {
+              skus: [],
+              image: "", // sku图片
+              oprice: 0, // 市场价格
+              pprice: 0, // 销售价格
+              cprice: 0, // 成本价格
+              stock: 0, // 总库存
+              volume: 0, // 体积
+              weight: 0, // 重量
+              code: "", // 编码
+            };
+            obj.skus = v;
+            return obj;
+          });
+        }
+      }
+    },
+  },
   mutations: {
     // 修改state中的数据
     vModelState(state, { key, value }) {

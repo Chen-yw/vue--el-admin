@@ -6,7 +6,12 @@
       <!-- 颜色选择器 -->
       <el-color-picker size="medium" v-if="type === 1"></el-color-picker>
       <!-- 图片选择器 -->
-      <span class="btn btn-light border" size="medium" v-else>
+      <span
+        class="btn btn-light border"
+        size="medium"
+        @click="chooseImage"
+        v-else
+      >
         <i class="el-icon-plus"></i>
       </span>
     </div>
@@ -30,6 +35,7 @@
 import { mapMutations } from "vuex";
 export default {
   name: "skuCardChild",
+  inject: ["app"],
   props: {
     type: {
       type: Number,
@@ -54,6 +60,15 @@ export default {
     // 修改规格卡片的属性
     updateSkuCardValue(key, val) {
       this.updateSkuValue({ index: this.index, indey: this.indey, key, val });
+    },
+
+    // 选择图片
+    chooseImage() {
+      // this.app.show();
+      // 传递一个函数
+      this.app.chooseImage((res) => {
+        console.log(res);
+      });
     },
   },
 };

@@ -119,9 +119,11 @@ export default {
     //   console.log(value.otherData);
     // });
     // 监听拖拽的结束
-    this.$dragging.$on("dragend", () => {
-      this.sortSkuCardValue(this.index, this.list);
-      console.log("拖拽结束");
+    this.$dragging.$on("dragend", (e) => {
+      if (e.group === "skuItem" + this.index) {
+        this.sortSkuCardValue(this.index, this.list);
+        console.log("拖拽结束");
+      }
     });
   },
   methods: {

@@ -57,14 +57,15 @@
             <el-form ref="form" label-width="80px">
               <el-form-item label="批量设置">
                 <el-button type="text">销售价</el-button>
-                <el-button type="text">成本价</el-button>
                 <el-button type="text">市场价</el-button>
+                <el-button type="text">成本价</el-button>
                 <el-button type="text">库存</el-button></el-button>
                 <el-button type="text">体积</el-button>
                 <el-button type="text">重量</el-button>
               </el-form-item>
               <el-form-item label="规格设置">
-                规格设置
+                <!-- 规格设置表格 -->
+                <skuTable></skuTable>
               </el-form-item> 
             </el-form>
           </template>
@@ -84,7 +85,8 @@ import { mapState, mapMutations } from "vuex";
 import baseCreate from "components/shop/create/baseCreate";
 import singleAttrs from "components/shop/create/singleAttrs";
 import multiAttrs from "components/shop/create/multiAttrs";
-import skuCard from 'components/shop/create/sku/skuCard'
+import skuCard from 'components/shop/create/sku/skuCard';
+import skuTable from 'components/shop/create/skuTable'
 
 export default {
   name: "Create",
@@ -97,7 +99,8 @@ export default {
     baseCreate,
     singleAttrs,
     multiAttrs,
-    skuCard
+    skuCard,
+    skuTable
   },
   computed: {
     // 导入vuex的state
@@ -139,5 +142,5 @@ export default {
 <style scoped>
 .goods_create .el-form-item {
   margin-bottom: 10px;
-}
+} 
 </style>
