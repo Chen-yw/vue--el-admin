@@ -6,14 +6,24 @@
       <!-- 颜色选择器 -->
       <el-color-picker size="medium" v-if="type === 1"></el-color-picker>
       <!-- 图片选择器 -->
-      <span
-        class="btn btn-light border"
-        size="medium"
-        @click="chooseImage"
-        v-else
-      >
-        <i class="el-icon-plus"></i>
-      </span>
+      <template v-else>
+        <span
+          class="btn btn-light border"
+          size="medium"
+          @click="chooseImage"
+          v-if="!item.image"
+        >
+          <i class="el-icon-plus"></i>
+        </span>
+        <img
+          v-else
+          :src="item.image"
+          class="rounded"
+          style="width: 45px; height: 45px; cursor: pointer;"
+          @click="chooseImage"
+          alt="图片加载错误"
+        />
+      </template>
     </div>
     <input
       :value="item.name"
@@ -68,7 +78,8 @@ export default {
       // 传递一个函数
       this.app.chooseImage((res) => {
         console.log(res);
-      });
+        this.updateSkuCardValue("image", res[0].url);
+      }, 1);
     },
   },
 };

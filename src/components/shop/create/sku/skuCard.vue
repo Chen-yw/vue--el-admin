@@ -30,7 +30,11 @@
         :value="item.name"
         @input="vModel(index, 'name', $event)"
       >
-        <el-button slot="append" icon="el-icon-more"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-more"
+          @click="chooseSkus"
+        ></el-button>
       </el-input>
       <el-radio-group
         size="mini"
@@ -97,6 +101,7 @@ import skuCardChild from "components/shop/create/sku/skuCardChild";
 
 export default {
   name: "skuCard",
+  inject: ["app"],
   props: {
     item: Object,
     index: Number,
@@ -160,6 +165,13 @@ export default {
     // 更新规格卡片的规格属性列表
     sortSkuCardValue(index, value) {
       this.sortSkuValue({ index, value });
+    },
+
+    // 弹层选择规格
+    chooseSkus() {
+      this.app.chooseSkus((res) => {
+        console.log(res);
+      });
     },
   },
 };

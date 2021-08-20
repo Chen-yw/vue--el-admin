@@ -25,10 +25,22 @@
           {{ sku.name }}
         </th>
         <td>
-          <span class="btn btn-light border" size="medium">
+          <span
+            class="btn btn-light border"
+            size="medium"
+            @click="chooseImage(item)"
+            v-if="!item.image"
+          >
             <i class="el-icon-plus"></i>
           </span>
-          {{ item.image }}
+          <img
+            v-else
+            :src="item.image"
+            class="rounded"
+            style="width: 45px; height: 45px; cursor: pointer;"
+            @click="chooseImage(item)"
+            alt="图片加载错误"
+          />
         </td>
         <td>
           <input
@@ -89,6 +101,7 @@ import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "skuTable",
+  inject: ["app"],
   data() {
     return {
       list: [],
@@ -109,6 +122,17 @@ export default {
   },
   mounted() {
     this.list = this.tableData;
+  },
+  methods: {
+    // 选择图片
+    chooseImage(item) {
+      // this.app.show();
+      // 传递一个函数
+      this.app.chooseImage((res) => {
+        console.log(res);
+        item.image = res[0].url;
+      }, 1);
+    },
   },
 };
 </script>

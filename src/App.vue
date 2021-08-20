@@ -2,23 +2,20 @@
   <div id="app">
     <router-view></router-view>
 
-    <el-dialog title="提示" :visible.sync="imageModel" width="30%">
-      <span>这是一段信息</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="hide">取 消</el-button>
-        <el-button type="primary" @click="confirm">确 定</el-button>
-      </span>
-    </el-dialog>
+    <image-dialog ref="imageDialog" :max="maxChooseImage"></image-dialog>
+    <skus-dialog ref="skusDialog"></skus-dialog>
   </div>
 </template>
 
 <script>
+import imageDialog from "components/image/imageDialog";
+import skusDialog from "components/skus/skusDialog";
+
 export default {
   name: "app",
   data() {
     return {
-      imageModel: false,
-      callback: false,
+      maxChooseImage: 9,
     };
   },
   // 依赖注入
@@ -27,25 +24,20 @@ export default {
       app: this,
     };
   },
-  components: {},
+  components: {
+    imageDialog,
+    skusDialog,
+  },
   methods: {
-    // 打开弹出层
-    chooseImage(callback) {
-      this.callback = callback;
-      this.imageModel = true;
+    // 选择图片
+    chooseImage(callback, max = 9) {
+      this.maxChooseImage = max;
+      this.$refs.imageDialog.chooseImage(callback);
     },
-    // 确定
-    confirm() {
-      // 选中图片的url
-      if (typeof this.callback === "function") {
-        this.callback("选中图片的url");
-      }
-      // 隐藏
-      this.hide();
-    },
-    // 隐藏弹出层
-    hide() {
-      this.imageModel = false;
+
+    // 选择规格
+    chooseSkus(callback) {
+      this.$refs.skusDialog.chooseSkus(callback);
     },
   },
 };

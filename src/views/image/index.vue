@@ -224,7 +224,7 @@
 </template>
 
 <script>
-import albumItem from "../../components/image/albumItem";
+import albumItem from "components/image/albumItem";
 export default {
   name: "index",
   data() {

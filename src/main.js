@@ -1,4 +1,5 @@
 import Vue from "vue";
+// import { createAPP } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import "./plugins/element.js";
@@ -13,6 +14,11 @@ Vue.prototype.$conf = $conf;
 Vue.use(VueDND);
 
 Vue.config.productionTip = false;
+
+// createAPP(App)
+//   .use(router)
+//   .use(store)
+//   .mount("#app");
 
 new Vue({
   router,

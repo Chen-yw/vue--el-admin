@@ -7,10 +7,12 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^3.0.1",
     "awe-dnd": "^0.3.4",
     "core-js": "^3.6.5",
     "echarts": "^5.1.2",
     "element-ui": "^2.4.5",
+    "tinymce": "^5.8.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.2",
     "vuex": "^3.6.2"
