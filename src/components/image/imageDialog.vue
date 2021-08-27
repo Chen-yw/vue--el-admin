@@ -236,8 +236,13 @@ export default {
     confirm() {
       // 选中图片的url
       if (typeof this.callback === "function") {
+        if (this.chooseList.length === 0) {
+          return this.$message({
+            message: "请选择图片或点击取消按钮",
+            type: "warning",
+          });
+        }
         this.callback(this.chooseList);
-        // this.chooseList = [];
       }
       // 隐藏
       this.hide();
@@ -341,13 +346,12 @@ export default {
     // 选中图片
     imageChoosed(item) {
       // 限制选中数量
-      if (this.chooseList.length >= this.max) {
+      if (this.chooseList.length >= this.max && !item.isCheck) {
         return this.$message({
           message: "最多选择" + this.max + "张图片",
           type: "warning",
         });
       }
-
       if (!item.isCheck) {
         // 将选中照片加入到相应的数组中
         this.chooseList.push({ id: item.id, url: item.url });

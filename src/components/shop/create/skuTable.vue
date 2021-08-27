@@ -116,7 +116,7 @@ export default {
   watch: {
     tableData(newValue, oldValue) {
       // 直接更改表格中的数据不能被监听到，添加规格属性能被监听到
-      console.log(newValue);
+      // console.log(newValue);
       this.list = newValue;
     },
   },

@@ -14,13 +14,13 @@ export default {
     express: "", // 运费模板
     skus_type: 1, // sku类型：0单规格 1多规格
 
-    banners: [], // 商品大图
-
     oprice: 0, // 市场价格
     pprice: 0, // 销售价格
     cprice: 0, // 成本价格
-    weight: 0, // 重量
     volume: 0, // 体积
+    weight: 0, // 重量
+
+    banners: [], // 商品大图
 
     // 规格卡片
     sku_card: [
@@ -74,12 +74,12 @@ export default {
     ],
 
     goods_type_id: "", // 商品类型
-    discount: 0, // 折扣
-
     // 商品属性
     goods_attrs: {
       phone_model: "",
     },
+
+    discount: 0, // 折扣
   },
   getters: {
     // 获取表格中的规格卡片名称,当规格卡片中没有属性时，不在表格中显示
@@ -187,7 +187,12 @@ export default {
     // 排序规格卡片的规格属性列表
     sortSkuValue(state, { index, value }) {
       state.sku_card[index].list = value;
-      console.log(state.sku_card[index]);
+      // console.log(state.sku_card[index]);
+    },
+
+    // 修改商品属性数据
+    vModelGoodsAttrs(state, { key, value }) {
+      state.goods_attrs[key] = value;
     },
   },
   actions: {},

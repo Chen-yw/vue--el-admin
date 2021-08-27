@@ -4,7 +4,12 @@
   >
     <div v-if="type != 0">
       <!-- 颜色选择器 -->
-      <el-color-picker size="medium" v-if="type === 1"></el-color-picker>
+      <el-color-picker
+        size="medium"
+        v-if="type === 1"
+        v-model="item.color"
+        @change="onColorChange"
+      ></el-color-picker>
       <!-- 图片选择器 -->
       <template v-else>
         <span
@@ -70,6 +75,11 @@ export default {
     // 修改规格卡片的属性
     updateSkuCardValue(key, val) {
       this.updateSkuValue({ index: this.index, indey: this.indey, key, val });
+    },
+
+    // 监听颜色选择器
+    onColorChange(e) {
+      this.updateSkuCardValue("color", e);
     },
 
     // 选择图片

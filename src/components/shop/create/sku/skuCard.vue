@@ -127,8 +127,12 @@ export default {
     this.$dragging.$on("dragend", (e) => {
       if (e.group === "skuItem" + this.index) {
         this.sortSkuCardValue(this.index, this.list);
-        console.log("拖拽结束");
+        // console.log("拖拽结束");
       }
+    });
+
+    this.$watch("item.list", (newValue, oldValue) => {
+      this.list = newValue;
     });
   },
   methods: {
@@ -170,7 +174,11 @@ export default {
     // 弹层选择规格
     chooseSkus() {
       this.app.chooseSkus((res) => {
-        console.log(res);
+        // console.log(res);
+        this.vModel(this.index, "name", res.name);
+        this.vModel(this.index, "type", res.type);
+        this.vModel(this.index, "list", res.list);
+        this.list = res.list;
       });
     },
   },
