@@ -29,13 +29,14 @@ export default {
         submenuActive: "0",
         submenu: [
           {
-            icon: "el-icon-s-order",
-            name: "商品列表",
+            icon: "el-icon-circle-plus-outline",
+            name: "创建商品",
             pathname: "shop_goods_create",
           },
           {
-            icon: "el-icon-picture",
-            name: "商品分类",
+            icon: "el-icon-s-order",
+            name: "分类管理",
+            pathname: "shop_category_list",
           },
           {
             icon: "el-icon-help",

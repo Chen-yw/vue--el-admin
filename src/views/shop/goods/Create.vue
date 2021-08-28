@@ -175,7 +175,19 @@
           <!-- 富文本编辑器 -->
           <tinymce ref="editor" v-model="msg" @onClick="onClick"></tinymce>
         </el-tab-pane>
-        <el-tab-pane label="折扣设置">折扣设置</el-tab-pane>
+        <el-tab-pane label="折扣设置">
+          <el-form ref="form" label-width="80px">
+            <el-form-item label="会员价">
+              <el-input
+                style="width: 250px;"
+                :value="discount"
+                @input="vModel('discount', $event)"
+              >
+                <template slot="append">%</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -247,6 +259,7 @@ export default {
       banners: (state) => state.goods_create.banners,
       goods_type_id: (state) => state.goods_create.goods_type_id,
       goods_attrs: (state) => state.goods_create.goods_attrs,
+      discount: (state) => state.goods_create.discount,
     }),
 
     // 规格卡片的总数

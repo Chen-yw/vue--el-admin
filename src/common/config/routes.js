@@ -44,6 +44,12 @@ const routes = [
         meta: { title: "相册管理" },
         component: () => import("views/image/index.vue"),
       },
+      {
+        path: "shop/category/list",
+        name: "shop_category_list",
+        meta: { title: "分类管理" },
+        component: () => import("views/shop/category/List.vue"),
+      },
     ],
   },
   {

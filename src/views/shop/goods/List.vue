@@ -14,7 +14,7 @@
             <template #left>
               <!-- 左边 -->
               <router-link :to="{name: 'shop_goods_create'}">
-                <el-button type="success" size="mini">发布商品</el-button>
+                <el-button type="success" size="mini" @click="successClick">发布商品</el-button>
               </router-link>
               <el-button type="warning" size="mini">恢复商品</el-button>
               <el-button type="danger" size="mini">批量删除</el-button>
@@ -234,7 +234,8 @@ export default {
     // 修改商品上下架状态
     changeStatus(item) {
       item.status = item.status === 1 ? 0 : 1;
-    }
+    },
+  
   }
 };
 </script>
