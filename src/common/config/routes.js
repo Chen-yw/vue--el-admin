@@ -50,6 +50,18 @@ const routes = [
         meta: { title: "分类管理" },
         component: () => import("views/shop/category/List.vue"),
       },
+      {
+        path: "shop/sku/list",
+        name: "shop_sku_list",
+        meta: { title: "商品规格管理" },
+        component: () => import("views/shop/sku/List.vue"),
+      },
+      {
+        path: "shop/type/list",
+        name: "shop_type_list",
+        meta: { title: "商品类型管理" },
+        component: () => import("views/shop/type/List.vue"),
+      },
     ],
   },
   {
