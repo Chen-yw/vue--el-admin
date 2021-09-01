@@ -141,7 +141,19 @@
           </div>
         </el-form-item>
         <el-form-item label="属性列表" prop="value">
-          属性列表
+          <el-table-column :data="form.value_list" style="width: 100%">
+            <el-table-column prop="order" label="排序" width="180">
+            </el-table-column>
+            <el-table-column prop="name" label="属性名称">
+            </el-table-column>
+            <el-table-column prop="type" label="所属类型"> </el-table-column>
+          </el-table-column>
+            <el-table-column prop="status" label="是否显示">
+            </el-table-column>
+            <el-table-column prop="value" label="属性值" >
+            </el-table-column>
+            <el-table-column label="操作"> </el-table-column>
+          </el-table-column>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -187,7 +199,15 @@ export default {
         order: 50,
         status: 1,
         sku_list: [],
-        value_list: [],
+        value_list: [
+          {
+            id: 0,
+            order: 50,
+            name: '属性名称',
+            type: 'input',
+            value: '属性值'
+          }
+        ],
       },
       rules: {
         name: [
