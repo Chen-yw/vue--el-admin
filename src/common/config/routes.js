@@ -62,6 +62,30 @@ const routes = [
         meta: { title: "商品类型管理" },
         component: () => import("views/shop/type/List.vue"),
       },
+      {
+        path: "shop/comment/list",
+        name: "shop_comment_list",
+        meta: { title: "商品评论管理" },
+        component: () => import("views/shop/comment/List.vue"),
+      },
+      {
+        path: "order/invoice/list",
+        name: "order_invoice_list",
+        meta: { title: "发票管理" },
+        component: () => import("views/order/invoice/List.vue"),
+      },
+      {
+        path: "order/afterSale/list",
+        name: "order_afterSale_list",
+        meta: { title: "售后服务" },
+        component: () => import("views/order/afterSale/List.vue"),
+      },
+      {
+        path: "order/order/list",
+        name: "order_order_list",
+        meta: { title: "售后服务" },
+        component: () => import("views/order/order/List.vue"),
+      },
     ],
   },
   {

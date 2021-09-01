@@ -101,7 +101,7 @@
     <!-- 新增/修改 规格模态框 -->
     <el-dialog
       title="添加类型"
-      width="60%"
+      width="80%"
       :visible.sync="createModel"
       top="5vh"
     >
@@ -140,20 +140,76 @@
             <el-button size="mini" class="el-icon-plus ml-2"></el-button>
           </div>
         </el-form-item>
-        <el-form-item label="属性列表" prop="value">
-          <el-table-column :data="form.value_list" style="width: 100%">
-            <el-table-column prop="order" label="排序" width="180">
+        <el-form-item label="属性列表">
+          <el-table :data="value_list" style="width: 100%">
+            <el-table-column prop="order" label="排序" width="80">
+              <template slot-scope="scope">
+                <el-input
+                  v-model="scope.row.order"
+                  size="mini"
+                  placeholder="排序"
+                ></el-input>
+              </template>
             </el-table-column>
-            <el-table-column prop="name" label="属性名称">
+            <el-table-column prop="name" label="属性名称" width="120">
+              <template slot-scope="scope">
+                <el-input
+                  v-model="scope.row.name"
+                  size="mini"
+                  placeholder="属性名称"
+                ></el-input>
+              </template>
             </el-table-column>
-            <el-table-column prop="type" label="所属类型"> </el-table-column>
-          </el-table-column>
-            <el-table-column prop="status" label="是否显示">
+            <el-table-column prop="type" label="所属类型" width="130">
+              <template slot-scope="scope">
+                <el-select
+                  v-model="scope.row.type"
+                  size="mini"
+                  placeholder="请选择所属类型"
+                >
+                  <el-option label="输入框" value="input"></el-option>
+                  <el-option label="单选框" value="radio "></el-option>
+                  <el-option label="多选框" value="checkbox "></el-option>
+                </el-select>
+              </template>
             </el-table-column>
-            <el-table-column prop="value" label="属性值" >
+            <el-table-column prop="status" label="是否显示" width="60">
+              <template slot-scope="scope">
+                <el-switch
+                  v-model="scope.row.status"
+                  :active-value="1"
+                  :inactive-value="0"
+                ></el-switch>
+              </template>
             </el-table-column>
-            <el-table-column label="操作"> </el-table-column>
-          </el-table-column>
+            <el-table-column prop="value" label="属性值">
+              <template slot-scope="scope" v-if="scope.row.type !== 'input'">
+                <el-input
+                  type="textarea"
+                  v-model="scope.row.value"
+                  size="mini"
+                  placeholder="一行一个属性值，多个属性值用换行输入"
+                  v-if="scope.row.isedit"
+                ></el-input>
+                <span v-else>{{scope.row.value}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="130">
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" v-if="scope.row.type !== 'input'" @click="editRow(scope)">{{scope.row.isedit ? '完成' : '编辑属性值'}}</el-button></el-button>
+                <el-button type="text" size="mini" @click="delRow(scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+        <el-form-item label="">
+          <el-button
+            type="text"
+            size="mini"
+            icon="el-icon-plus"
+            @click="addValue"
+            >添加一个属性</el-button
+          >
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -193,27 +249,27 @@ export default {
       currentPage: 1,
       multipleSelection: [],
       createModel: false,
-      editIndex: -1,
+      editIndex: -1,  // 用于判断是修改或者添加
       form: {
         name: "",
         order: 50,
         status: 1,
         sku_list: [],
-        value_list: [
-          {
-            id: 0,
-            order: 50,
-            name: '属性名称',
-            type: 'input',
-            value: '属性值'
-          }
-        ],
       },
+      value_list: [
+        {
+          id: 0,
+          order: 50,
+          name: "属性名称",
+          type: "input",
+          value: "属性值",
+          isedit: false,
+        },
+      ],
       rules: {
         name: [
-          { required: true, message: "规格名称不能为空", trigger: "blur" },
+          { required: true, message: "类型名称不能为空", trigger: "blur" },
         ],
-        value: [{ required: true, message: "规格值不能为空", trigger: "blur" }],
       },
     };
   },
@@ -237,19 +293,17 @@ export default {
           name: "",
           order: 50,
           status: 1,
-          type: 0,
-          value: "",
+          sku_list: [],
         };
+        this.value_list = [];
         this.editIndex = -1;
       } else {
         // 修改
         this.form = {
-          name: e.row.name,
-          order: e.row.order,
-          status: e.row.status,
-          type: e.row.type,
-          value: e.row.value.replace(/，/g, "\n"),
+          ...e.row
         };
+        // 解构赋值
+        this.value_list = [...e.row.value_list];
         this.editIndex = e.$index;
       }
       this.createModel = true;
@@ -265,20 +319,55 @@ export default {
       });
     },
 
-    // 提交
+    // 提交，添加类型
     submit() {
       this.$refs.form.validate((res) => {
+        // 验证属性列表
+        var result = true;
+        var message = [];
+        this.value_list.forEach((item, index) => {
+          let no = index + 1;
+          if (item.order == '') {
+            result = result && false;
+            message.push('第' + no + '行：排序不能为空');
+          }
+          if (item.name == '') {
+            result = result && false;
+            message.push('第' + no + '行：属性名称不能为空');
+          }
+          if (item.type !== 'input' && item.value == '') {
+            result = result && false;
+            message.push('第' + no + '行：属性值不能为空');
+          }
+        });
+
+        if (!result) {
+          var temp = '';
+          message.forEach(v => {
+            temp += `<li>${v}</li>`
+          })
+          return this.$notify({
+            title: '提示',
+            dangerouslyUseHTMLString: true,
+            type: 'warning',
+            duration: 3000,
+            message: `<ul>${temp}</ul>`,
+          });
+        }
+
         if (res) {
           if (this.editIndex === -1) {
-            this.form.value = this.form.value.replace(/\n/g, "，");
-            this.tableData.unshift(this.form);
+            this.tableData.unshift({
+              ...this.form,
+              value_list: [...this.value_list],
+            });
           } else {
             let item = this.tableData[this.editIndex];
             item.name = this.form.name;
             item.order = this.form.order;
             item.status = this.form.status;
-            item.type = this.form.type;
-            item.value = this.form.value.replace(/\n/g, "，");
+            item.sku_list = this.form.sku_list;
+            item.value_list = this.form.value_list;
           }
           // 关闭模态框
           this.createModel = false;
@@ -319,6 +408,29 @@ export default {
     // 监听表格项的选择
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+
+    // 添加属性行
+    addValue() {
+      let item = {
+        id: 0,
+        order: 50,
+        name: "",
+        type: "input",
+        value: "",
+        isedit: false,
+      };
+      this.value_list.push(item);
+    },
+    
+    // 编辑属性
+    editRow(scope) {
+      scope.row.isedit = !scope.row.isedit;
+    },
+  
+    // 删除属性行
+    delRow(index) {
+      this.value_list.splice(index, 1);
     },
   },
 };

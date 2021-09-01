@@ -20,6 +20,7 @@
         </slot>
       </div>
     </div>
+
     <el-card class="box-card bg-light" v-show="superSearch">
       <div slot="header" class="clearfix" style="margin: -10px;">
         <span>高级搜索</span>
@@ -30,6 +31,7 @@
           >收起</el-button
         >
       </div>
+
       <!-- 表单 -->
       <slot name="form"> </slot>
     </el-card>

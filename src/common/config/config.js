@@ -30,8 +30,8 @@ export default {
         submenu: [
           {
             icon: "el-icon-circle-plus-outline",
-            name: "创建商品",
-            pathname: "shop_goods_create",
+            name: "商品列表",
+            pathname: "shop_goods_list",
           },
           {
             icon: "el-icon-s-order",
@@ -51,7 +51,7 @@ export default {
           {
             icon: "el-icon-s-comment",
             name: "商品评论",
-            pathname: "",
+            pathname: "shop_comment_list",
           },
         ],
       },
@@ -60,12 +60,19 @@ export default {
         submenuActive: "0",
         submenu: [
           {
-            icon: "",
-            name: "订单1",
+            icon: "el-icon-s-claim",
+            name: "订单列表",
+            pathname: "order_order_list",
           },
           {
-            icon: "",
-            name: "订单2",
+            icon: "el-icon-s-claim",
+            name: "发票管理",
+            pathname: "order_invoice_list",
+          },
+          {
+            icon: "el-icon-s-claim",
+            name: "售后服务",
+            pathname: "order_afterSale_list",
           },
         ],
       },
@@ -74,12 +81,14 @@ export default {
         submenuActive: "0",
         submenu: [
           {
-            icon: "",
-            name: "会员1",
+            icon: "el-icon-s-claim",
+            name: "会员列表",
+            // pathname: "user_userList_list",
           },
           {
-            icon: "",
-            name: "会员2",
+            icon: "el-icon-s-claim",
+            name: "会员等级",
+            // pathname: "user_userLevel_list",
           },
         ],
       },
@@ -88,12 +97,24 @@ export default {
         submenuActive: "0",
         submenu: [
           {
-            icon: "",
-            name: "设置1",
+            icon: "el-icon-s-claim",
+            name: "基础设置",
+            // pathname: "set_base",
           },
           {
-            icon: "",
-            name: "设置2",
+            icon: "el-icon-s-claim",
+            name: "物流设置",
+            // pathname: "set_express",
+          },
+          {
+            icon: "el-icon-s-claim",
+            name: "管理员管理",
+            // pathname: "set_manager",
+          },
+          {
+            icon: "el-icon-s-claim",
+            name: "交易设置",
+            // pathname: "set_payment",
           },
         ],
       },
