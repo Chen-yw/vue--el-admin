@@ -86,6 +86,12 @@ const routes = [
         meta: { title: "售后服务" },
         component: () => import("views/order/order/List.vue"),
       },
+      {
+        path: "user/userList/list",
+        name: "user_userList_list",
+        meta: { title: "会员管理" },
+        component: () => import("views/user/userList/List.vue"),
+      },
     ],
   },
   {

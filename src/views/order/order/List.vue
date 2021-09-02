@@ -93,8 +93,18 @@
               width="45"
               align="center"
             ></el-table-column>
-            <el-table-column label="商品" width="380px">
+            <el-table-column label="商品" width="330">
               <template slot-scope="scope">
+                <div class="d-flex">
+                  <div style="flex: 1">
+                    <p class="mb-1">订单编号：</p>
+                    <p class="mb-1"><small>2018080298545157</small></p>
+                  </div>
+                  <div style="flex: 1">
+                    <p class="mb-1">下单时间</p>
+                    <p class="mb-1"><small>2018080298545157</small></p>
+                  </div>
+                </div>
                 <div class="media">
                   <img
                     :src="scope.row.cover"
@@ -113,63 +123,49 @@
             </el-table-column>
             <el-table-column
               prop="type"
-              label="商品类型"
+              label="实付款"
               align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="sale_count"
-              label="实际销量"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="order"
-              label="商品排序"
-              align="center"
-            ></el-table-column>
-            <el-table-column label="商品状态" align="center">
+              width="120"
+            >
               <template slot-scope="scope">
-                <el-button
-                  type="success"
-                  size="mini"
-                  :plain="true"
-                  @click="scope.row.ischeck = 1"
-                  >审核通过</el-button
-                >
-                <el-button
-                  class="ml-0 mt-2"
-                  type="danger"
-                  size="mini"
-                  :plain="true"
-                  @click="scope.row.ischeck = 2"
-                  >审核拒绝</el-button
-                >
-                <!-- <el-button :type="scope.row.status ? 'success' : 'danger' " size="mini" :plain="true" @click="changeStatus(scope.row)">{{scope.row.status ? '上架' : '下架'}}</el-button> -->
+                <span>￥20</span>
+                <p><small>(含运费：￥0.00)</small></p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="sale_count" label="买家" align="center">
+              <template slot-scope="scope">
+                <span>用户名</span>
+                <p><small>(用户ID：4616464)</small></p>
+              </template>
+            </el-table-column>
+            <el-table-column label="支付方式" align="center">
+              <template slot-scope="scope">
+                <span class="badge badge-success">微信支付</span>
               </template>
             </el-table-column>
             <el-table-column
               prop="stock"
-              label="总库存"
+              label="配送方式"
               align="center"
             ></el-table-column>
-            <el-table-column
-              prop="pprice"
-              label="价格(元)"
-              align="center"
-            ></el-table-column>
+            <el-table-column prop="pprice" label="交易状态" align="center">
+              <template slot-scope="scope">
+                <div>
+                  付款状态：<span class="badge badge-success">已付款</span>
+                </div>
+                <div>
+                  发货状态：<span class="badge badge-success">待发货</span>
+                </div>
+                <div>
+                  收货状态：<span class="badge badge-success">待收货</span>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column label="操作" align="center" width="150px">
               <template slot-scope="scope">
-                <el-button-group>
-                  <el-button type="primary" size="mini" :plain="true"
-                    >修改</el-button
-                  >
-                  <el-button
-                    type="danger"
-                    size="mini"
-                    :plain="true"
-                    @click="deleteItem(scope.$index)"
-                    >删除</el-button
-                  >
-                </el-button-group>
+                <el-button type="primary" size="mini" :plain="true"
+                  >订单详情</el-button
+                >
               </template>
             </el-table-column>
           </el-table>

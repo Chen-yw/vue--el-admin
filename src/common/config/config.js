@@ -83,7 +83,7 @@ export default {
           {
             icon: "el-icon-s-claim",
             name: "会员列表",
-            // pathname: "user_userList_list",
+            pathname: "user_userList_list",
           },
           {
             icon: "el-icon-s-claim",
