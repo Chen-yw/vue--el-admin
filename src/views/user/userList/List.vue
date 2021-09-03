@@ -188,12 +188,6 @@
           </div>
           <!-- </template> -->
         </el-form-item>
-        <!-- <el-form-item label="等级">
-          <el-select v-model="form.level_id" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="等级">
           <el-select
             v-model="form.level_id"
@@ -357,7 +351,11 @@ export default {
     // 提交
     submit() {
       if (this.editIndex === -1) {
-        this.tableData.unshift(this.form);
+        (this.form.level = {
+          id: 1,
+          name: "普通会员",
+        }),
+          this.tableData.unshift(this.form);
       } else {
         let item = this.tableData[this.editIndex];
         item.username = this.form.username;
