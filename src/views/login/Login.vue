@@ -3,7 +3,7 @@
     <!-- <el-container class="container"> -->
     <!-- <el-main> -->
     <el-row type="flex" justify="space-around" class="el-row">
-      <el-col :xs="14" :sm="10" :md="13" :lg="6" :xl="6">
+      <el-col :xs="14" :sm="10" :md="11" :lg="6" :xl="6">
         <el-card class="box-card">
           <div slot="header" class="card-header">
             <h3 style="color: slategray;">{{ $conf.logo }}</h3>
@@ -63,15 +63,28 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$router.push({ name: "home" });
-          alert("登录成功！");
-        } else {
-          console.log("error submit!!");
-          alert("用户名或密码错误！");
-          return false;
-        }
+      this.$refs[formName].validate((e) => {
+        if (!e) return;
+        // 提交表单
+        this.axios
+          .post("http://ceshi5.dishait.cn/admin/login", {
+            username: "123",
+            password: "123",
+          })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        // if (valid) {
+        //   this.$router.push({ name: "home" });
+        //   alert("登录成功！");
+        // } else {
+        //   console.log("error submit!!");
+        //   alert("用户名或密码错误！");
+        //   return false;
+        // }
       });
     },
   },

@@ -14,12 +14,12 @@
           <el-table-column label="支付方式" align="center">
             <template slot-scope="scope">
               <div class="d-flex align-items-center">
-                <img
+                <!-- <img
                   class="rounded mr-2"
                   :src="scope.row.src"
                   style="width: 40px; height: 40px; "
                   alt=""
-                />
+                /> -->
                 <div
                   class="d-flex flex-column"
                   style="align-items: flex-start;"
