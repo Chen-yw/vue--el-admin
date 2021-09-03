@@ -92,6 +92,36 @@ const routes = [
         meta: { title: "会员管理" },
         component: () => import("views/user/userList/List.vue"),
       },
+      {
+        path: "user/userLevel/list",
+        name: "user_userLevel_list",
+        meta: { title: "会员等级" },
+        component: () => import("views/user/userLevel/List.vue"),
+      },
+      {
+        path: "set/base/index",
+        name: "set_base",
+        meta: { title: "基础设置" },
+        component: () => import("views/set/base/Index.vue"),
+      },
+      {
+        path: "set/express/index",
+        name: "set_express",
+        meta: { title: "物流设置" },
+        component: () => import("views/set/express/Index.vue"),
+      },
+      {
+        path: "set/manager/index",
+        name: "set_manager",
+        meta: { title: "管理员管理" },
+        component: () => import("views/set/manager/Index.vue"),
+      },
+      {
+        path: "set/payment/index",
+        name: "set_payment",
+        meta: { title: "交易设置" },
+        component: () => import("views/set/payment/Index.vue"),
+      },
     ],
   },
   {

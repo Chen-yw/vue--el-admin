@@ -32,7 +32,6 @@
             >
               <el-option label="区域一" :value="0"></el-option>
               <el-option label="区域二" :value="1"></el-option>
-              <el-option></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="下单时间" class="mb-0">
@@ -378,7 +377,7 @@ export default {
 
     // 删除单个
     delectItem(scope) {
-      this.$confirm("是否要删除该规格？", "提示", {
+      this.$confirm("是否要删除该会员？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "waring",

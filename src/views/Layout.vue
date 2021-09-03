@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     headerSelect(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
       if (key === "100-1") {
         return console.log("修改资料");
       }

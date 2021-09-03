@@ -88,7 +88,7 @@ export default {
           {
             icon: "el-icon-s-claim",
             name: "会员等级",
-            // pathname: "user_userLevel_list",
+            pathname: "user_userLevel_list",
           },
         ],
       },
@@ -99,22 +99,22 @@ export default {
           {
             icon: "el-icon-s-claim",
             name: "基础设置",
-            // pathname: "set_base",
+            pathname: "set_base",
           },
           {
             icon: "el-icon-s-claim",
             name: "物流设置",
-            // pathname: "set_express",
+            pathname: "set_express",
           },
           {
             icon: "el-icon-s-claim",
             name: "管理员管理",
-            // pathname: "set_manager",
+            pathname: "set_manager",
           },
           {
             icon: "el-icon-s-claim",
             name: "交易设置",
-            // pathname: "set_payment",
+            pathname: "set_payment",
           },
         ],
       },
