@@ -22,11 +22,14 @@
           >
           <el-submenu index="100">
             <template slot="title">
-              <el-avatar size="small" :src="circleUrl"></el-avatar>
-              summer
+              <el-avatar
+                size="small"
+                :src="user.avatar ? user.avatar : circleUrl"
+              ></el-avatar>
+              {{ user.username }}
             </template>
-            <el-menu-item index="100-1">退出</el-menu-item>
-            <el-menu-item index="100-2">修改</el-menu-item>
+            <el-menu-item index="100-1">修改</el-menu-item>
+            <el-menu-item index="100-2">退出</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-header>
@@ -80,6 +83,7 @@
 
 <script>
 import { toStringFilter } from "common/mixin.js";
+import { mapState } from "vuex";
 
 export default {
   name: "layout",
@@ -116,6 +120,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      user: (state) => state.user.user,
+    }),
     slideMenusActive: {
       get() {
         return this.navBar.list[this.navBar.active].submenuActive || "0";
@@ -135,7 +142,8 @@ export default {
         return console.log("修改资料");
       }
       if (key === "100-2") {
-        return console.log("退出登录");
+        // 退出登录
+        return this.logout();
       }
 
       this.navBar.active = key;
@@ -189,6 +197,33 @@ export default {
         this.navBar.active = r.top;
         this.slideMenusActive = r.left;
       }
+    },
+
+    // 退出登录
+    logout() {
+      this.axios
+        .post(
+          "/admin/logout",
+          {},
+          {
+            headers: {
+              token: this.user.token,
+            },
+          }
+        )
+        .then((res) => {
+          this.$message("退出成功！");
+          // 清除状态和存储
+          this.$store.commit("logout");
+          // 返回到登录页
+          this.$router.push({ name: "login" });
+        })
+        .catch((err) => {
+          // 清除状态和存储
+          this.$store.commit("logout");
+          // 返回到登录页
+          this.$router.push({ name: "login" });
+        });
     },
   },
 };

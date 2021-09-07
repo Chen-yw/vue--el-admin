@@ -10,18 +10,18 @@
           </div>
           <div class="card-body">
             <el-form ref="form" :model="form" :rules="rules">
-              <el-form-item prop="userName">
+              <el-form-item prop="username">
                 <el-input
-                  v-model="form.userName"
+                  v-model="form.username"
                   size="medium"
                   placeholder="请输入用户名"
                 ></el-input>
               </el-form-item>
-              <el-form-item prop="passWord">
+              <el-form-item prop="password">
                 <el-input
-                  v-model="form.passWord"
+                  v-model="form.password"
                   size="medium"
-                  type="passWord"
+                  type="password"
                   placeholder="请输入密码"
                 ></el-input>
               </el-form-item>
@@ -31,7 +31,8 @@
                   type="primary"
                   size="medium"
                   @click="submitForm('form')"
-                  >登录</el-button
+                  :loading="loading"
+                  >{{ loading ? "登录中..." : "立即登录" }}</el-button
                 >
               </el-form-item>
             </el-form>
@@ -49,15 +50,16 @@ export default {
   name: "Login",
   data() {
     return {
+      loading: false,
       form: {
-        userName: "",
-        passWord: "",
+        username: "",
+        password: "",
       },
       rules: {
-        userName: [
+        username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
         ],
-        passWord: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
     };
   },
@@ -65,26 +67,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((e) => {
         if (!e) return;
+        this.loading = true;
         // 提交表单
         this.axios
-          .post("http://ceshi5.dishait.cn/admin/login", {
-            username: "123",
-            password: "123",
-          })
+          .post("/admin/login", this.form)
           .then((res) => {
-            console.log(res);
+            console.log(res.data);
+            // 存储到vuex
+            // 存储到本地存储
+            this.$store.commit("login", res.data.data);
+            // 成功提示
+            this.$message("登录成功！");
+            this.loading = false;
+            // 跳转后台首页
+            this.$router.push({ name: "index" });
           })
           .catch((err) => {
-            console.log(err);
+            this.loading = false;
           });
-        // if (valid) {
-        //   this.$router.push({ name: "home" });
-        //   alert("登录成功！");
-        // } else {
-        //   console.log("error submit!!");
-        //   alert("用户名或密码错误！");
-        //   return false;
-        // }
       });
     },
   },

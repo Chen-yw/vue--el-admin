@@ -28,6 +28,10 @@ export default {
     imageDialog,
     skusDialog,
   },
+  created() {
+    // 初始化用户信息
+    this.$store.commit("initUser");
+  },
   methods: {
     // 选择图片
     chooseImage(callback, max = 9) {
