@@ -65,8 +65,8 @@
       </el-tab-pane>
       <el-tab-pane label="角色列表" name="second">
         <div class="d-flex align-items-center">
-          <el-button class="mb-2 " type="primary" size="mini"
-            >添加管理员</el-button
+          <el-button class="mb-2 " type="primary" size="mini" v-auth="''"
+            >添加角色</el-button
           >
         </div>
         <el-table
@@ -123,7 +123,11 @@
                   @click.stop="showOrHide(data)"
                   >{{ data.status ? "显示" : "隐藏" }}</el-button
                 >
-                <el-button type="success" size="mini" @click.stop="append(data)"
+                <el-button
+                  type="success"
+                  size="mini"
+                  @click.stop="append(data)"
+                  v-auth="'添加规则'"
                   >增加</el-button
                 >
                 <el-button

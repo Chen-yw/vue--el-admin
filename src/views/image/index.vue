@@ -153,7 +153,9 @@
           class="h-100 d-flex  align-items-center justify-content-center border-right"
         >
           <el-button-group>
-            <el-button size="mini">上一页</el-button>
+            <el-button size="mini" :disabled="albumPage === 1"
+              >上一页</el-button
+            >
             <el-button size="mini">下一页</el-button>
           </el-button-group>
         </div>
@@ -162,10 +164,10 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[100, 200, 300, 400]"
-            :page-size="100"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="400"
+            :total="total"
           >
           </el-pagination>
         </div>
@@ -233,9 +235,10 @@ export default {
         order: "",
         keyWord: "",
       },
-      albumIndex: 0,
+      albumIndex: 0, // 选中相册索引
       albumModel: false,
-      albums: [],
+      albums: [], // 相册列表
+      albumPage: 1, // 相册分页
       albumForm: {
         title: "",
         name: "",
@@ -244,44 +247,97 @@ export default {
       albumEditIndex: -1,
       uploadModel: false,
       previewModel: false,
-      imageList: [],
+      imageList: [], // 图片列表
       previewUrl: null,
-      // 选中数组
-      chooseList: [],
-      // 默认选中页
-      currentPage: 1,
+      chooseList: [], // 选中图片
+      currentPage: 1, // 图片列表选中页
+      pageSize: 10, //每页默认显示数量
+      pageSizes: [10, 20, 50, 100], // 每页显示条数的可选项
+      total: 10, // 总条数
     };
   },
   components: {
     albumItem,
+  },
+  computed: {
+    // 选中相册的id
+    image_class_id() {
+      let item = this.albums[this.albumIndex];
+      if (item) {
+        return item.id;
+      }
+      return 0;
+    },
+
+    // 选中相册的图片列表url
+    getImageListUrl() {
+      // '?limit=[:limit]&order=[:order]&keyword=[:keyword]'
+      return `/admin/imageclass/${this.image_class_id}/image/${this.currentPage}`;
+    },
   },
   created() {
     this.__init();
   },
   methods: {
     __init() {
-      for (let i = 1; i <= 10; i++) {
+      // 获取相册列表
+      this.axios
+        .get("/admin/imageclass/" + this.albumPage, {
+          token: true,
+        })
+        .then((res) => {
+          let result = res.data.data;
+          this.albums = result.list;
+          // console.log(4444, this.getImageListUrl);
+        });
+
+      /* for (let i = 1; i <= 10; i++) {
         this.albums.push({
           name: "相册" + i,
           num: Math.floor(Math.random() * 100),
           order: 0,
         });
-      }
+      } */
 
-      for (let i = 1; i <= 20; i++) {
-        this.imageList.push({
-          id: i,
-          url: "https://dss0.bdstatic.com/k4oZeXSm1A5BphGlnYG/skin/879.jpg?2",
-          name: "图片" + i,
-          isCheck: false,
-          checkOrder: 0,
-        });
-      }
+      // 获取选中相册第一页图片列表
+
+      setTimeout(() => {
+        this.axios
+          .get(this.getImageListUrl, {
+            token: true,
+          })
+          .then((res) => {
+            let result = res.data.data;
+            this.imageList = result.list.map((item) => {
+              return {
+                id: item.id,
+                url: item.url,
+                name: item.name,
+                isCheck: false,
+                checkOrder: 0,
+              };
+            });
+            for (let i = 1; i <= 10; i++) {
+              this.imageList.push({
+                id: i,
+                url:
+                  "https://dss0.bdstatic.com/k4oZeXSm1A5BphGlnYG/skin/879.jpg?2",
+                name: "图片" + i,
+                isCheck: false,
+                checkOrder: 0,
+              });
+            }
+
+            // console.log(res);
+          });
+      }, 300);
     },
 
     // 切换相册
     albumChange(index) {
       this.albumIndex = index;
+      console.log(this.albumIndex);
+      console.log(this.image_class_id);
     },
 
     // 删除相册并弹出提示弹框

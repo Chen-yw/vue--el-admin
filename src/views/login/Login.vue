@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "Login",
   data() {
@@ -63,6 +64,9 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters(["adminIndex"]),
+  },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((e) => {
@@ -70,17 +74,29 @@ export default {
         this.loading = true;
         // 提交表单
         this.axios
-          .post("/admin/login", this.form)
+          .post("/admin/login", this.form, {
+            loading: true,
+          })
           .then((res) => {
-            console.log(res.data);
             // 存储到vuex
+            let data = res.data.data;
             // 存储到本地存储
-            this.$store.commit("login", res.data.data);
+            this.$store.commit("login", data);
+            // 存储权限规则
+            if (data.role && data.role.rules) {
+              window.sessionStorage.setItem(
+                "rules",
+                JSON.stringify(data.role.rules)
+              );
+            }
+
+            // 生成后台菜单
+            this.$store.commit("createNavBar", data.tree);
             // 成功提示
             this.$message("登录成功！");
             this.loading = false;
-            // 跳转后台首页
-            this.$router.push({ name: "index" });
+            // 跳转后台菜单首页
+            this.$router.push({ name: this.adminIndex });
           })
           .catch((err) => {
             this.loading = false;

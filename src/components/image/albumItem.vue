@@ -7,11 +7,11 @@
   >
     {{ item.name }}
     <span class="btn btn-light btn-sm border ml-auto" v-if="!showOptions">
-      {{ item.num }}
+      {{ item.images_count }}
     </span>
     <el-dropdown class="ml-auto" v-else>
       <span class="btn btn-light btn-sm border">
-        {{ item.num }}<i class="el-icon-arrow-down el-icon--right"></i>
+        {{ item.images_count }}<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.stop.native="openAlbumModel({ item, index })"

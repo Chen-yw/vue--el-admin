@@ -5,7 +5,7 @@ export default {
     list: [
       {
         name: "首页",
-        submenuActive: "0",
+        subActive: "0",
         submenu: [
           {
             icon: "el-icon-s-home",
@@ -26,7 +26,7 @@ export default {
       },
       {
         name: "商品",
-        submenuActive: "0",
+        subActive: "0",
         submenu: [
           {
             icon: "el-icon-circle-plus-outline",
@@ -57,7 +57,7 @@ export default {
       },
       {
         name: "订单",
-        submenuActive: "0",
+        subActive: "0",
         submenu: [
           {
             icon: "el-icon-s-claim",
@@ -78,23 +78,23 @@ export default {
       },
       {
         name: "会员",
-        submenuActive: "0",
+        subActive: "0",
         submenu: [
           {
             icon: "el-icon-s-claim",
             name: "会员列表",
-            pathname: "user_userList_list",
+            pathname: "user_user-list_list",
           },
           {
             icon: "el-icon-s-claim",
             name: "会员等级",
-            pathname: "user_userLevel_list",
+            pathname: "user_user-level_list",
           },
         ],
       },
       {
         name: "设置",
-        submenuActive: "0",
+        subActive: "0",
         submenu: [
           {
             icon: "el-icon-s-claim",

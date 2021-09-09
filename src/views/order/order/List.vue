@@ -300,6 +300,9 @@ export default {
         })
         .catch(() => {});
     },
+
+    // 导出数据
+    successClick() {},
   },
 };
 </script>

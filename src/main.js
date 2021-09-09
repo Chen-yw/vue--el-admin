@@ -11,20 +11,48 @@ import VueDND from "awe-dnd";
 
 import { Message } from "element-ui";
 
+let loading = null;
+let requesrtCount = 0;
+// 显示loading
+function showLoading() {
+  if (requesrtCount === 0) {
+    loading = Message({
+      message: "加载中...",
+      duration: 0,
+    });
+  }
+  requesrtCount++;
+}
+// 隐藏loading
+function hideLoading() {
+  if (requesrtCount > 0) {
+    requesrtCount--;
+  }
+  if (loading && requesrtCount === 0) {
+    loading.close();
+  }
+}
+
 // 请求拦截器
 axios.interceptors.request.use(
   (config) => {
-    console.log(config);
+    // console.log(111, config);
     // 添加header头的token
     let token = window.sessionStorage.getItem("token");
     if (config.token === true) {
       config.headers["token"] = token;
     }
-    // 在发送请求之前做些什么
+
+    if (config.loading === true) {
+      // 显示loading
+      showLoading();
+    }
+
     return config;
   },
   (err) => {
-    // 对请求错误做些什么
+    // 隐藏loading
+    hideLoading();
     return Promise.reject(err);
   }
 );
@@ -32,8 +60,9 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   (response) => {
-    console.log("响应拦截器 成功");
-    // 对响应数据做点什么
+    // console.log("响应拦截");
+    // 隐藏loading
+    hideLoading();
     return response;
   },
   (err) => {
@@ -41,8 +70,9 @@ axios.interceptors.response.use(
     if (err.response && err.response.data && err.response.data.errorCode) {
       Message.error(err.response.data.msg);
     }
-    // 对响应错误做点什么
-    return Promise.reject(error);
+    // 隐藏loading
+    hideLoading();
+    return Promise.reject(err);
   }
 );
 
@@ -52,12 +82,22 @@ Vue.prototype.$conf = $conf;
 // 使用拖拽插件
 Vue.use(VueDND);
 
-Vue.config.productionTip = false;
+// 自定义添加节点
+Vue.directive("auth", {
+  inserted(el, binding, vnode) {
+    let user = window.sessionStorage.getItem("user");
+    user = user ? JSON.parse(user) : {};
+    if (!user.super) {
+      let rules = user.ruleNames ? user.ruleNames : [];
+      let v = rules.find((item) => item === binding.value);
+      if (!v) {
+        el.parentNode.removeChild(el);
+      }
+    }
+  },
+});
 
-// createAPP(App)
-//   .use(router)
-//   .use(store)
-//   .mount("#app");
+Vue.config.productionTip = false;
 
 new Vue({
   router,

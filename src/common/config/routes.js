@@ -88,13 +88,13 @@ const routes = [
       },
       {
         path: "user/userList/list",
-        name: "user_userList_list",
+        name: "user_user-list_list",
         meta: { title: "会员管理" },
         component: () => import("views/user/userList/List.vue"),
       },
       {
         path: "user/userLevel/list",
-        name: "user_userLevel_list",
+        name: "user_user-level_list",
         meta: { title: "会员等级" },
         component: () => import("views/user/userLevel/List.vue"),
       },
@@ -121,6 +121,12 @@ const routes = [
         name: "set_payment",
         meta: { title: "交易设置" },
         component: () => import("views/set/payment/Index.vue"),
+      },
+      {
+        path: "error/e404",
+        name: "error_e404",
+        meta: { title: "404错误" },
+        component: () => import("views/error/e404.vue"),
       },
     ],
   },

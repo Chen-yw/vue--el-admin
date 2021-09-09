@@ -22,10 +22,7 @@
           >
           <el-submenu index="100">
             <template slot="title">
-              <el-avatar
-                size="small"
-                :src="user.avatar ? user.avatar : circleUrl"
-              ></el-avatar>
+              <el-avatar size="small" src="circleUrl"></el-avatar>
               {{ user.username }}
             </template>
             <el-menu-item index="100-1">修改</el-menu-item>
@@ -90,7 +87,7 @@ export default {
   mixins: [toStringFilter],
   data() {
     return {
-      navBar: {},
+      // navBar: {},
       bran: [],
       circleUrl:
         "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
@@ -98,7 +95,7 @@ export default {
   },
   created() {
     // 初始化全局文件中的数据,给navBar赋值
-    this.navBar = this.$conf.navBar;
+    // this.navBar = this.$conf.navBar;
     // 获取面包屑导航
     this.getRouterBran();
     // 刷新页面的时候初始化选中菜单
@@ -122,17 +119,23 @@ export default {
   computed: {
     ...mapState({
       user: (state) => state.user.user,
+      navBar: (state) => state.menu.navBar,
     }),
     slideMenusActive: {
       get() {
-        return this.navBar.list[this.navBar.active].submenuActive || "0";
+        let item = this.navBar.list[this.navBar.active];
+        return item ? item.subActive : "0";
       },
       set(val) {
-        this.navBar.list[this.navBar.active].submenuActive = val;
+        let item = this.navBar.list[this.navBar.active];
+        if (item) {
+          item.subActive = val;
+        }
       },
     },
     slideMenus() {
-      return this.navBar.list[this.navBar.active].submenu || [];
+      let item = this.navBar.list[this.navBar.active];
+      return item ? item.submenu : [];
     },
   },
   methods: {
@@ -206,9 +209,10 @@ export default {
           "/admin/logout",
           {},
           {
-            headers: {
-              token: this.user.token,
-            },
+            token: true,
+            // headers: {
+            //   token: this.user.token,
+            // },
           }
         )
         .then((res) => {
