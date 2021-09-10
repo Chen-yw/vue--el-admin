@@ -51,7 +51,7 @@
         </el-aside>
 
         <!-- 主体布局 -->
-        <el-main>
+        <el-main v-loading="loading">
           <!-- 面包屑导航 -->
           <div class="breadcrumb" v-if="bran.length > 0">
             <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -85,10 +85,17 @@ import { mapState } from "vuex";
 export default {
   name: "layout",
   mixins: [toStringFilter],
+  provide() {
+    // 依赖注入
+    return {
+      layout: this,
+    };
+  },
   data() {
     return {
       // navBar: {},
       bran: [],
+      loading: false,
       circleUrl:
         "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
     };
@@ -139,6 +146,15 @@ export default {
     },
   },
   methods: {
+    // 显示loading
+    showLoading() {
+      this.loading = true;
+    },
+    // 隐藏loading
+    hideLoading() {
+      this.loading = false;
+    },
+
     headerSelect(key, keyPath) {
       // console.log(key, keyPath);
       if (key === "100-1") {
