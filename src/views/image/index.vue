@@ -205,7 +205,7 @@
     </el-dialog>
 
     <!-- 上传图片模态框 -->
-    <el-dialog title="上传图片" :visible.sync="uploadModel">
+    <el-dialog title="上传图片" :visible.sync="uploadModel" @close="__init">
       <div class="text-center">
         <el-upload
           class="upload-demo"
@@ -225,8 +225,8 @@
         </el-upload>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="uploadModel = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <!-- <el-button>取 消</el-button> -->
+        <el-button type="primary" @click="uploadModel = false">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -318,18 +318,18 @@ export default {
                 checkOrder: 0,
               };
             });
-            // this.total = result.totalCount;
-            this.total = 100;
-            for (let i = 1; i <= 100; i++) {
-              this.imageList.push({
-                id: i,
-                url:
-                  "https://dss0.bdstatic.com/k4oZeXSm1A5BphGlnYG/skin/879.jpg?2",
-                name: "图片" + i,
-                isCheck: false,
-                checkOrder: 0,
-              });
-            }
+            this.total = result.totalCount;
+            // this.total = 20;
+            // for (let i = 1; i <= 20; i++) {
+            //   this.imageList.push({
+            //     id: i,
+            //     url:
+            //       "https://dss0.bdstatic.com/k4oZeXSm1A5BphGlnYG/skin/879.jpg?2",
+            //     name: "图片" + i,
+            //     isCheck: false,
+            //     checkOrder: 0,
+            //   });
+            // }
             this.layout.hideLoading();
             // console.log(res);
           })
@@ -709,7 +709,9 @@ export default {
     },
 
     // 图片上传成功后的钩子
-    uploadSuccess(response, file, fileList) {},
+    uploadSuccess(response, file, fileList) {
+      // console.log(response, file, fileList);
+    },
   },
 };
 </script>
