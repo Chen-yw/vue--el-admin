@@ -281,11 +281,38 @@ export default {
     },
 
     // 拖拽结束
-    nodeDragEnd(...options) {},
+    nodeDragEnd(...options) {
+      // 被拖拽节点对应的数据
+      let item = options[0].data;
+      // 结束拖拽是最后进入的节点数据
+      let obj = options[1].data;
+      if (obj) {
+        if (options[2] === "before" || options[2] === "after") {
+          item.category_id = obj.category_id;
+        } else {
+          item.category_id = obj.id;
+        }
+      }
+    },
 
     // 拖拽完成后触发事件
     nodeDrop(...options) {
-      console.log(this.sortData);
+      this.layout.showLoading();
+      this.axios
+        .post(
+          "/admin/category/sort",
+          {
+            sortdata: JSON.stringify(this.sortData),
+          },
+          { token: true }
+        )
+        .then((res) => {
+          this.__init();
+          this.layout.hideLoading();
+        })
+        .catch((err) => {
+          this.layout.hideLoading();
+        });
     },
 
     // 创建顶级分类
