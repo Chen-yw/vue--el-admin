@@ -12,7 +12,7 @@
         <!-- 侧部 -->
         <el-aside
           width="200px"
-          style="position: absolute; top: 0px; left: 0; bottom: 0px;"
+          style="position: absolute; top: 0px; left: 0; bottom: 50px;"
           class="bg-white border-right"
         >
           <!-- 侧边 | 规格卡片标题 -->
@@ -28,6 +28,22 @@
             </li>
           </ul>
         </el-aside>
+        <!-- 底部分页 -->
+        <el-footer
+          style="position: absolute;left: 0;bottom: 0;width: 200px; height: 50px;"
+          class="border d-flex align-items-center justify-content-center"
+        >
+          <el-pagination
+            :current-page="page.current"
+            :page-sizes="page.sizes"
+            :page-size="page.size"
+            layout="prev,next"
+            :total="page.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          >
+          </el-pagination>
+        </el-footer>
 
         <!-- 主内容 -->
         <el-container>
@@ -75,10 +91,14 @@
 </template>
 
 <script>
+import { table_page_Mixin } from "common/mixin.js";
 export default {
-  name: "imageDialog",
+  name: "skusDialog",
+  mixins: [table_page_Mixin],
   data() {
     return {
+      preUrl: "skus",
+      loading: false, //关闭layout的loading
       createModel: false, // 隐藏选择图片
       callback: false, // 接收函数字段
       chooseList: [], // 选中数组
@@ -86,55 +106,56 @@ export default {
       skuIndex: 0, // 被操作规格卡片索引
       // 规格卡片列表
       skusList: [
-        {
-          name: "色调", // 规格名称
-          type: 0, // 规格类型 0无 1颜色 2图片
-          // 规格属性列表
-          list: [
-            {
-              id: "1",
-              name: "蓝色",
-              color: "",
-              image: "",
-              ischeck: false,
-            },
-            {
-              id: "2",
-              name: "黄色",
-              color: "",
-              image: "",
-              ischeck: false,
-            },
-          ],
-        },
-        {
-          name: "尺寸", // 规格名称
-          type: 0, // 规格类型 0无 1颜色 2图片
-          // 规格属性列表
-          list: [
-            {
-              id: "3",
-              name: "XL",
-              color: "",
-              image: "",
-              ischeck: false,
-            },
-            {
-              id: "4",
-              name: "XXL",
-              color: "",
-              image: "",
-              ischeck: false,
-            },
-          ],
-        },
+        // {
+        //   name: "色调", // 规格名称
+        //   type: 0, // 规格类型 0无 1颜色 2图片
+        //   // 规格属性列表
+        //   list: [
+        //     {
+        //       id: "1",
+        //       name: "蓝色",
+        //       color: "",
+        //       image: "",
+        //       ischeck: false,
+        //     },
+        //     {
+        //       id: "2",
+        //       name: "黄色",
+        //       color: "",
+        //       image: "",
+        //       ischeck: false,
+        //     },
+        //   ],
+        // },
+        // {
+        //   name: "尺寸", // 规格名称
+        //   type: 0, // 规格类型 0无 1颜色 2图片
+        //   // 规格属性列表
+        //   list: [
+        //     {
+        //       id: "3",
+        //       name: "XL",
+        //       color: "",
+        //       image: "",
+        //       ischeck: false,
+        //     },
+        //     {
+        //       id: "4",
+        //       name: "XXL",
+        //       color: "",
+        //       image: "",
+        //       ischeck: false,
+        //     },
+        //   ],
+        // },
       ],
     };
   },
   computed: {
     // 当前规格卡片下的属性列表
     skuItems() {
-      return this.skusList[this.skuIndex].list;
+      let item = this.skusList[this.skuIndex];
+      return item ? item.list : [];
     },
 
     // 是否全选规格卡片上的规格属性
@@ -144,6 +165,22 @@ export default {
   },
   created() {},
   methods: {
+    // 处理请求结果
+    getListResult(data) {
+      this.skusList = data.list.map((item) => {
+        let list = item.default ? item.default.split(",") : [];
+        item.list = list.map((v) => {
+          return {
+            name: v,
+            color: "",
+            image: "",
+            ischeck: false,
+          };
+        });
+        return item;
+      });
+    },
+
     // 打开弹出层
     chooseSkus(callback) {
       this.callback = callback;
@@ -156,6 +193,7 @@ export default {
       if (typeof this.callback === "function") {
         let item = this.skusList[this.skuIndex];
         this.callback({
+          id: item.id,
           name: item.name,
           type: item.type,
           list: this.chooseList,

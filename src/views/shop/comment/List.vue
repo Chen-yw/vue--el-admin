@@ -199,7 +199,7 @@ export default {
             cover: "http://static.yoshop.xany6.com/2018071718294208f086786.jpg",
           },
           username: "用户名",
-          star: "4",
+          star: 4,
           create_time: "2019-07-23 14:15:17",
           status: 1,
         },

@@ -153,11 +153,11 @@
 
 <script>
 import buttonSearch from "components/common/buttonSearch";
-import { shopTableMixin } from "common/mixin.js";
+import { table_page_Mixin } from "common/mixin.js";
 export default {
   name: "List",
   inject: ["layout"],
-  mixins: [shopTableMixin],
+  mixins: [table_page_Mixin],
   data() {
     return {
       preUrl: "skus",
@@ -209,18 +209,23 @@ export default {
   components: {
     buttonSearch,
   },
-  computed: {
-    // 表格选中行id组成的数组
-    ids() {
-      return this.multipleSelection.map((item) => {
-        return item.id;
-      });
-    },
-  },
+  // computed: {
+  //   // 表格选中行id组成的数组
+  //   ids() {
+  //     return this.multipleSelection.map((item) => {
+  //       return item.id;
+  //     });
+  //   },
+  // },
   created() {
     // this.getList();
   },
   methods: {
+    // 获取请求列表分页的url 这里是重写
+    getListUrl() {
+      return `/admin/${this.preUrl}/${this.page.current}?limit=${this.page.size}`;
+    },
+
     // 请求数据
     /* getList() {
       this.layout.showLoading();
@@ -237,6 +242,11 @@ export default {
           this.layout.hideLoading();
         });
     }, */
+
+    // 处理列表结果
+    getListResult(data) {
+      this.tableData = data.list;
+    },
 
     // 打开模态框
     openModel(e = false) {
@@ -265,10 +275,18 @@ export default {
       this.createModel = true;
     },
 
-    // 提交
+    // 提交 增加、修改
     submit() {
       this.$refs.form.validate((res) => {
         if (res) {
+          this.form.default = this.form.default.replace(/\n/g, "，");
+          let id = 0;
+          if (this.editIndex !== -1) {
+            id = this.tableData[this.editIndex].id;
+          }
+          this.addOrEdit(this.form, id);
+          this.createModel = false; // 关闭模态框
+          /* this.form.default = this.form.default.replace(/\n/g, "，");
           if (this.editIndex === -1) {
             // 添加规格
             this.layout.showLoading();
@@ -309,18 +327,14 @@ export default {
             // item.status = this.form.status;
             // item.type = this.form.type;
             // item.default = this.form.default.replace(/\n/g, "，");
-          }
+          } */
           // 关闭模态框
-          this.createModel = false;
-          // this.$message({
-          //   type: "success",
-          //   message: this.editIndex === -1 ? "添加成功！" : "修改成功！",
-          // });
+          // this.createModel = false;
         }
       });
     },
 
-    // 修改规格状态 启用/禁用
+    /*  // 修改状态 启用/禁用
     changeStatus(item) {
       let status = item.status === 1 ? 0 : 1;
       this.layout.showLoading();
@@ -344,8 +358,8 @@ export default {
           this.layout.hideLoading();
         });
     },
-
-    // 删除单个
+ */
+    /* // 删除单个
     delectItem(scope) {
       this.$confirm("是否要删除该规格？", "提示", {
         confirmButtonText: "确定",
@@ -369,15 +383,11 @@ export default {
             console.log(err);
             this.layout.hideLoading();
           });
-        // this.$message({
-        //   type: "success",
-        //   message: "删除成功！",
-        // });
       });
-    },
+    }, */
 
     // 批量删除
-    deleteAll() {
+    /* deleteAll() {
       if (this.ids.length === 0) {
         return this.$message({
           type: "warning",
@@ -389,13 +399,13 @@ export default {
         cancelButtonText: "取消",
         type: "waring",
       }).then(() => {
-        /*  this.multipleSelection.forEach((item) => {
-        let index = this.tableData.findIndex((v) => v.id === item.id);
-        if (index !== -1) {
-          this.tableData.splice(index, 1);
-        }
-      });
-      this.multipleSelection = []; */
+      //    this.multipleSelection.forEach((item) => {
+      //   let index = this.tableData.findIndex((v) => v.id === item.id);
+      //   if (index !== -1) {
+      //     this.tableData.splice(index, 1);
+      //   }
+      // });
+      // this.multipleSelection = [];
         this.layout.showLoading();
         this.axios
           .post(
@@ -419,7 +429,7 @@ export default {
             this.layout.hideLoading();
           });
       });
-    },
+    }, */
 
     // // 监听表格项的选择
     // handleSelectionChange(val) {
