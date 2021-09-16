@@ -7,6 +7,7 @@
       class="pt-3"
       placeholder="手机号/邮箱/会员名称"
       :showSearch="true"
+      @search="searchEvent"
     >
       <template #left>
         <!-- 左边 -->
@@ -26,15 +27,19 @@
           </el-form-item>
           <el-form-item label="会员等级" class="mb-0">
             <el-select
-              v-model="search.group_id"
+              v-model="search.user_level_id"
               size="mini"
               placeholder="请选择会员等级"
             >
-              <el-option label="区域一" :value="0"></el-option>
-              <el-option label="区域二" :value="1"></el-option>
+              <el-option
+                v-for="(item, index) in user_level"
+                :key="index"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="下单时间" class="mb-0">
+          <!-- <el-form-item label="下单时间" class="mb-0">
             <el-date-picker
               v-model="search.time"
               type="daterange"
@@ -43,7 +48,7 @@
               end-placeholder="结束日期"
             >
             </el-date-picker>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="mb-0">
             <el-button type="info" size="mini" @click="searchEvent"
               >搜索</el-button
@@ -86,22 +91,29 @@
         </el-table-column>
         <el-table-column label="会员等级" align="center">
           <template slot-scope="scope">
-            {{ scope.row.level.name }}
+            {{ scope.row.user_level.name }}
           </template>
         </el-table-column>
         <el-table-column label="登录/注册" width="250" align="center">
           <template slot-scope="scope">
             <div>注册时间：{{ scope.row.create_time }}</div>
-            <div>最后登录：{{ scope.row.update_time }}</div>
+            <div>最后登录：{{ scope.row.last_login_time }}</div>
           </template>
         </el-table-column>
         <el-table-column label="状态" align="center">
           <template slot-scope="scope">
-            <el-switch
+            <!-- <el-switch
               v-model="scope.row.status"
               :active-value="1"
               :inactive-value="0"
-            ></el-switch>
+            ></el-switch> -->
+            <el-button
+              :plain="true"
+              :type="scope.row.status ? 'success' : 'danger'"
+              size="mini"
+              @click="changeStatus(scope.row)"
+              >{{ scope.row.status ? "启用" : "禁用" }}</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="150px">
@@ -109,10 +121,10 @@
             <el-button type="text" size="mini" @click="openModel(scope)"
               >修改</el-button
             >
-            <el-button type="text" size="mini" @click="openModel(scope)"
+            <!-- <el-button type="text" size="mini" @click="openModel(scope)"
               >重置密码</el-button
-            >
-            <el-button type="text" size="mini" @click="delectItem(scope)"
+            > -->
+            <el-button type="text" size="mini" @click="delectItem(scope.row)"
               >删除</el-button
             >
           </template>
@@ -127,11 +139,13 @@
     >
       <div style="flex: 1" class="px-2">
         <el-pagination
-          :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :current-page="page.current"
+          :page-sizes="page.sizes"
+          :page-size="page.size"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="page.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
@@ -189,12 +203,16 @@
         </el-form-item>
         <el-form-item label="等级">
           <el-select
-            v-model="form.level_id"
+            v-model="form.user_level_id"
             size="mini"
             placeholder="请选择会员等级"
           >
-            <el-option label="普通会员" :value="1"></el-option>
-            <el-option label="黄金会员" :value="2"></el-option>
+            <el-option
+              v-for="(item, index) in user_level"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
@@ -212,13 +230,13 @@
             placeholder="邮箱"
           ></el-input>
         </el-form-item>
-        <el-form-item label="性别">
+        <!-- <el-form-item label="性别">
           <el-radio-group v-model="form.sex" size="mini">
             <el-radio-button :label="0" border>保密</el-radio-button>
             <el-radio-button :label="1" border>男性</el-radio-button>
             <el-radio-button :label="2" border>女性</el-radio-button>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="状态">
           <el-radio-group v-model="form.status" size="mini">
             <el-radio-button :label="1" border>启用</el-radio-button>
@@ -236,45 +254,49 @@
 
 <script>
 import buttonSearch from "components/common/buttonSearch";
+import { table_page_Mixin } from "common/mixin.js";
 export default {
   name: "List",
-  inject: ["app"],
+  inject: ["app", "layout"],
+  mixins: [table_page_Mixin],
   data() {
     return {
+      preUrl: "user",
       tabIndex: 0,
       tableData: [
-        {
-          id: 10,
-          username: "用户名",
-          avatar:
-            "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4100987808,2324741924&fm=27&gp=0.jpg",
-          level_id: 1,
-          level: {
-            id: 1,
-            name: "普通会员",
-          },
-          create_time: "2019-07-24 15:52:56",
-          update_time: "2019-07-24 15:52:56",
-          status: 1, // 启用
-        },
+        // {
+        // id: 10,
+        // username: "用户名",
+        // avatar:
+        //   "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4100987808,2324741924&fm=27&gp=0.jpg",
+        // level_id: 1,
+        // level: {
+        //   id: 1,
+        //   name: "普通会员",
+        // },
+        // create_time: "2019-07-24 15:52:56",
+        // update_time: "2019-07-24 15:52:56",
+        // status: 1, // 启用
+        // },
       ],
-      currentPage: 1,
+      user_level: [],
+      // currentPage: 1,
       createModel: false,
       editIndex: -1,
       search: {
         keyWord: "",
-        group_id: 0,
-        time: "",
+        user_level_id: "",
+        // time: "", //发布时间
       },
       form: {
         username: "",
         password: "",
         nickname: "",
         avatar: "",
-        level_id: 1,
+        user_level_id: "",
         phone: "",
         email: "",
-        sex: 0,
+        // sex: 0,
         status: 1,
       },
     };
@@ -284,24 +306,47 @@ export default {
   },
   created() {},
   methods: {
+    // 获取请求列表分页的url
+    getListUrl() {
+      return `/admin/${this.preUrl}/${this.page.current}?limit=${this.page.size}&keyword=${this.search.keyWord}&user_level_id=${this.search.user_level_id}`;
+    },
+
+    // 处理请求结果
+    getListResult(data) {
+      this.tableData = data.list;
+      this.user_level = data.user_level;
+    },
+
     // 搜索
     searchEvent(keyWord = false) {
       // 简单搜索
       if (typeof keyWord === "string") {
-        return console.log("简单搜索。", keyWord);
+        this.search.keyWord = keyWord;
+        this.getList();
+        return;
       }
       // 高级搜索
-      console.log("高级搜索。");
+      this.getList();
     },
     // 清空高级搜索条件
     clearSearch() {
       this.search = {
         keyword: "",
-        group_id: "",
-        time: "",
+        user_level_id: "",
+        // time: "",
       };
-      this.$refs.buttonSearch[this.tabIndex].closeSuperSearch();
+      // this.$refs.buttonSearch[this.tabIndex].closeSuperSearch();
     },
+
+    // 修改状态
+    // changeStatus(item) {
+    //
+    //   item.status = !item.status;
+    //   this.$message({
+    //     message: !item.status ? "启用成功！" : "禁用成功！",
+    //     type: "success",
+    //   });
+    // },
 
     // 打开模态框
     openModel(e = false) {
@@ -313,10 +358,10 @@ export default {
           password: "",
           nickname: "",
           avatar: "",
-          level_id: 1,
+          user_level_id: 3,
           phone: "",
           email: "",
-          sex: 0,
+          // sex: 0,
           status: 1,
         };
         this.editIndex = -1;
@@ -327,10 +372,10 @@ export default {
           password: "",
           nickname: e.row.nickname,
           avatar: e.row.avatar,
-          level_id: e.row.level_id,
+          user_level_id: e.row.user_level_id,
           phone: e.row.phone,
           email: e.row.email,
-          sex: e.row.sex,
+          // sex: e.row.sex,
           status: e.row.status,
         };
         this.editIndex = e.$index;
@@ -338,64 +383,62 @@ export default {
       this.createModel = true;
     },
 
-    changeStatus(item) {
-      // 请求服务端数据修改状态
-      item.status = !item.status;
-      this.$message({
-        message: !item.status ? "启用成功！" : "禁用成功！",
-        type: "success",
-      });
-    },
-
     // 提交
     submit() {
-      if (this.editIndex === -1) {
-        (this.form.level = {
-          id: 1,
-          name: "普通会员",
-        }),
-          this.tableData.unshift(this.form);
-      } else {
-        let item = this.tableData[this.editIndex];
-        item.username = this.form.username;
-        item.password = this.form.password;
-        item.nickname = this.form.nickname;
-        item.avatar = this.form.avatar;
-        item.level_id = this.form.level_id;
-        item.phone = this.form.phone;
-        item.email = this.form.email;
-        item.sex = this.form.sex;
-        item.status = this.form.status;
+      let id = 0;
+      if (this.editIndex !== -1) {
+        id = this.tableData[this.editIndex].id;
       }
+      this.addOrEdit(this.form, id);
       // 关闭模态框
       this.createModel = false;
-      this.$message({
-        type: "success",
-        message: this.editIndex === -1 ? "添加成功！" : "修改成功！",
-      });
+
+      // if (this.editIndex === -1) {
+      //   (this.form.level = {
+      //     id: 1,
+      //     name: "普通会员",
+      //   }),
+      //     this.tableData.unshift(this.form);
+      // } else {
+      //   let item = this.tableData[this.editIndex];
+      //   item.username = this.form.username;
+      //   item.password = this.form.password;
+      //   item.nickname = this.form.nickname;
+      //   item.avatar = this.form.avatar;
+      //   item.user_level_id = this.form.user_level_id;
+      //   item.phone = this.form.phone;
+      //   item.email = this.form.email;
+      //   // item.sex = this.form.sex;
+      //   item.status = this.form.status;
+      // }
+      // // 关闭模态框
+      // this.createModel = false;
+      // this.$message({
+      //   type: "success",
+      //   message: this.editIndex === -1 ? "添加成功！" : "修改成功！",
+      // });
     },
 
-    // 删除单个
-    delectItem(scope) {
-      this.$confirm("是否要删除该会员？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "waring",
-      }).then(() => {
-        this.tableData.splice(scope.$index, 1);
-        this.$message({
-          type: "success",
-          message: "删除成功！",
-        });
-      });
-    },
+    // // 删除单个
+    // delectItem(scope) {
+    //   this.$confirm("是否要删除该会员？", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "waring",
+    //   }).then(() => {
+    //     this.tableData.splice(scope.$index, 1);
+    //     this.$message({
+    //       type: "success",
+    //       message: "删除成功！",
+    //     });
+    //   });
+    // },
 
     // 选择头像
     chooseImage() {
       // this.app.show();
       // 传递一个函数
       this.app.chooseImage((res) => {
-        console.log(res);
         this.form.avatar = res[0].url;
       }, 1);
     },

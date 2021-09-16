@@ -38,15 +38,22 @@
         </el-table-column>
         <el-table-column prop="level" label="等级序号" align="center">
         </el-table-column>
-        <el-table-column prop="discont" label="折扣率(%)" align="center">
+        <el-table-column prop="discount" label="折扣率(%)" align="center">
         </el-table-column>
         <el-table-column label="状态" align="center">
           <template slot-scope="scope">
-            <el-switch
+            <!-- <el-switch
               v-model="scope.row.status"
               :active-value="1"
               :inactive-value="0"
-            ></el-switch>
+            ></el-switch> -->
+            <el-button
+              :plain="true"
+              :type="scope.row.status ? 'success' : 'danger'"
+              size="mini"
+              @click="changeStatus(scope.row)"
+              >{{ scope.row.status ? "启用" : "禁用" }}</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="150px">
@@ -55,7 +62,7 @@
               >修改</el-button
             >
 
-            <el-button type="text" size="mini" @click="delectItem(scope)"
+            <el-button type="text" size="mini" @click="delectItem(scope.row)"
               >删除</el-button
             >
           </template>
@@ -70,11 +77,13 @@
     >
       <div style="flex: 1" class="px-2">
         <el-pagination
-          :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :current-page="page.current"
+          :page-sizes="page.sizes"
+          :page-size="page.size"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="page.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
@@ -121,7 +130,7 @@
             <el-input
               class="mt-2"
               type="number"
-              v-model="form.consume"
+              v-model="form.max_price"
               size="mini"
               :min="0"
               style="width: 30%;"
@@ -138,7 +147,7 @@
             <el-input
               class="mt-2"
               type="number"
-              v-model="form.times"
+              v-model="form.max_times"
               size="mini"
               :min="0"
               style="width: 30%;"
@@ -151,10 +160,10 @@
             </small>
           </div>
         </el-form-item>
-        <el-form-item label="折扣率(%)" prop="discont">
+        <el-form-item label="折扣率(%)" prop="discount">
           <el-input
             type="number"
-            v-model="form.discont"
+            v-model="form.discount"
             size="mini"
             :min="0"
             style="width: 30%;"
@@ -177,33 +186,36 @@
 
 <script>
 import buttonSearch from "components/common/buttonSearch";
+import { table_page_Mixin } from "common/mixin.js";
 export default {
   name: "List",
-  inject: ["app"],
+  inject: ["app", "layout"],
+  mixins: [table_page_Mixin],
   data() {
     return {
+      preUrl: "user_level",
       level: 0,
       tabIndex: 0,
       tableData: [
-        {
-          id: 10,
-          name: "普通会员",
-          consume: 100,
-          times: 10,
-          discont: 10,
-          level: 1,
-          status: 1, // 启用
-          create_time: "",
-        },
+        // {
+        //   id: 10,
+        //   name: "普通会员",
+        //   max_price: 100,
+        //   max_times: 10,
+        //   discount: 10,
+        //   level: 1,
+        //   status: 1, // 启用
+        //   create_time: "",
+        // },
       ],
       currentPage: 1,
       createModel: false,
       editIndex: -1,
       form: {
         name: "",
-        consume: 0,
-        times: 0,
-        discont: 0,
+        max_price: 0,
+        max_times: 0,
+        discount: 0,
         level: 0,
         status: 1, // 启用
       },
@@ -218,17 +230,24 @@ export default {
       let arr = [
         {
           name: "累计消费",
-          value: "consume",
+          value: "max_price",
         },
         {
           name: "累计次数",
-          value: "times",
+          value: "max_times",
         },
       ];
       return arr[this.level];
     },
   },
   methods: {
+    // 处理请求结果
+    getListResult(data) {
+      console.log(data);
+      this.tableData = data.list;
+      // this.user_level = data.user_level;
+    },
+
     // 搜索
     searchEvent(keyWord = false) {
       // 简单搜索
@@ -238,6 +257,7 @@ export default {
       // 高级搜索
       console.log("高级搜索。");
     },
+
     // 清空高级搜索条件
     clearSearch() {
       this.search = {
@@ -255,9 +275,9 @@ export default {
         // 初始化表单
         this.form = {
           name: "",
-          consume: 0,
-          times: 0,
-          discont: 0,
+          max_price: 0,
+          max_times: 0,
+          discount: 0,
           level: 0,
           status: 1, // 启用
         };
@@ -266,9 +286,9 @@ export default {
         // 修改
         this.form = {
           name: e.row.name,
-          consume: e.row.consume,
-          times: e.row.times,
-          discont: e.row.discont,
+          max_price: e.row.max_price,
+          max_times: e.row.max_times,
+          discount: e.row.discount,
           level: e.row.level,
           status: e.row.status, // 启用
         };
@@ -277,54 +297,62 @@ export default {
       this.createModel = true;
     },
 
-    changeStatus(item) {
-      // 请求服务端数据修改状态
-      item.status = !item.status;
-      this.$message({
-        message: !item.status ? "启用成功！" : "禁用成功！",
-        type: "success",
-      });
-    },
+    // 修改状态
+    // changeStatus(item) {
+    //   item.status = !item.status;
+    //   this.$message({
+    //     message: !item.status ? "启用成功！" : "禁用成功！",
+    //     type: "success",
+    //   });
+    // },
 
     // 提交
     submit() {
-      if (this.editIndex === -1) {
-        (this.form.level = {
-          id: 1,
-          name: "普通会员",
-        }),
-          this.tableData.unshift(this.form);
-      } else {
-        let item = this.tableData[this.editIndex];
-        item.name = this.form.name;
-        item.consume = this.form.consume;
-        item.times = this.form.times;
-        item.discont = this.form.discont;
-        item.level = this.form.level;
-        item.status = this.form.status; // 启用
+      let id = 0;
+      if (this.editIndex !== -1) {
+        id = this.tableData[this.editIndex].id;
       }
+      this.addOrEdit(this.form, id);
       // 关闭模态框
       this.createModel = false;
-      this.$message({
-        type: "success",
-        message: this.editIndex === -1 ? "添加成功！" : "修改成功！",
-      });
+
+      // if (this.editIndex === -1) {
+      //   (this.form.level = {
+      //     id: 1,
+      //     name: "普通会员",
+      //   }),
+      //     this.tableData.unshift(this.form);
+      // } else {
+      //   let item = this.tableData[this.editIndex];
+      //   item.name = this.form.name;
+      //   item.max_price = this.form.max_price;
+      //   item.max_times = this.form.max_times;
+      //   item.discount = this.form.discount;
+      //   item.level = this.form.level;
+      //   item.status = this.form.status; // 启用
+      // }
+      // // 关闭模态框
+      // this.createModel = false;
+      // this.$message({
+      //   type: "success",
+      //   message: this.editIndex === -1 ? "添加成功！" : "修改成功！",
+      // });
     },
 
     // 删除单个
-    delectItem(scope) {
-      this.$confirm("是否要删除该等级？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "waring",
-      }).then(() => {
-        this.tableData.splice(scope.$index, 1);
-        this.$message({
-          type: "success",
-          message: "删除成功！",
-        });
-      });
-    },
+    // delectItem(scope) {
+    //   this.$confirm("是否要删除该等级？", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "waring",
+    //   }).then(() => {
+    //     this.tableData.splice(scope.$index, 1);
+    //     this.$message({
+    //       type: "success",
+    //       message: "删除成功！",
+    //     });
+    //   });
+    // },
 
     // 选择头像
     chooseImage() {

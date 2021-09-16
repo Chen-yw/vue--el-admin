@@ -13,10 +13,16 @@
             style="width: 200px; "
             class="mr-2"
           ></el-input>
-          <el-button type="info" size="mini" @click="$emit('search', keyWord)"
+          <el-button
+            class="mx-2"
+            type="info"
+            size="mini"
+            @click="$emit('search', keyWord)"
             >搜索</el-button
           >
-          <el-button size="mini" @click="upSuperSearch">高级搜索</el-button>
+          <el-button v-if="showSuperSearch" size="mini" @click="upSuperSearch"
+            >高级搜索</el-button
+          >
         </slot>
       </div>
     </div>
@@ -49,6 +55,10 @@ export default {
     showSearch: {
       type: Boolean,
       dafault: true,
+    },
+    showSuperSearch: {
+      tyle: Boolean,
+      default: true,
     },
   },
   data() {

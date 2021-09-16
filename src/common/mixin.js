@@ -130,7 +130,7 @@ export const table_page_Mixin = {
 
     // 删除单个
     delectItem(scope) {
-      console.log("删除单个");
+      console.log("删除单个", scope.id);
       this.$confirm("是否要删除该规格？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
