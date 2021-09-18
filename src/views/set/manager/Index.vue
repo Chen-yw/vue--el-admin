@@ -131,7 +131,9 @@
                 @click="openDialog('role', scope.row)"
                 >修改</el-button
               >
-              <el-button type="text" size="mini">配置权限</el-button>
+              <el-button type="text" size="mini" @click="openDrawer(scope.row)"
+                >配置权限</el-button
+              >
               <el-button type="text" size="mini" @click="delectItem(scope.row)"
                 >删除</el-button
               >
@@ -186,7 +188,7 @@
                 <el-button
                   type="text"
                   size="mini"
-                  @click.stop="openDialog('rule')"
+                  @click.stop="openDialog('rule', data.id)"
                   >增加</el-button
                 >
                 <el-button
@@ -435,6 +437,47 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 配置权限 -->
+    <el-drawer
+      title="配置权限"
+      :visible.sync="drawer"
+      direction="rtl"
+      :before-close="handleClose"
+      size="35%"
+    >
+      <div
+        style="position: absolute; top: 52px; left: 0; right: 0; bottom: 0;"
+        v-loading="drawerLoading"
+      >
+        <div
+          style="position: absolute; top: 0;left: 0;right: 0; bottom: 80px; overflow-y: auto;"
+        >
+          <!-- <div class="bg-danger" style="height: 100%;"> -->
+          <el-tree
+            :data="drawerList"
+            :props="defaultProps"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :default-checked-keys="checkedKeys"
+            :check-strictly="true"
+            @check="check"
+          >
+          </el-tree>
+          <!-- </div> -->
+        </div>
+        <div
+          style="height: 80px; position: absolute; bottom: 0; right: 0; left: 0;"
+          class="border d-flex align-items-center bg-white"
+        >
+          <el-button class="ml-3" @click="drawer = false">取消</el-button>
+          <el-button class="ml-3" type="primary" @click="submitRules"
+            >确定</el-button
+          >
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -529,9 +572,15 @@ export default {
           condition: "", // 后端规则 （menu为0时必填）
           icon: "",
           method: "GET", // 请求方式 （menu为0时必填）
-          order: "", // 排序
+          order: 50, // 排序
         },
       },
+      drawer: false,
+      // direction: "rtl",
+      checkedKeys: [],
+      drawerLoading: false,
+      drawerList: [], // 抽屉数据
+      drawerId: 0,
     };
   },
   filters: {
@@ -622,15 +671,38 @@ export default {
           }
           break;
         case "rule":
-          this.form.manager = {
-            username: "",
-            password: "",
-            avatar: "",
-            role_id: "",
-            status: 1,
-          };
-          break;
-        default:
+          if (!item || typeof item === "number") {
+            this.form.rule = {
+              menu: 0, // 是否是菜单，0否1是
+              rule_id: "", // 上级权限id
+              name: "", // 权限名称
+              status: 1, // 是否启用
+              frontpath: "", // 对应前端路由路径（menu为1且rule_id>0时必填）
+              desc: "", // 端路由路径别名（menu为1时必填）
+              condition: "", // 后端规则 （menu为0时必填）
+              icon: "",
+              method: "GET", // 请求方式 （menu为0时必填）
+              order: 50, // 排序
+            };
+            this.form.rule.rule_id = item;
+            this.dialogId = 0;
+          } else {
+            this.form.rule = {
+              menu: item.menu, // 是否是菜单，0否1是
+              rule_id: item.rule_id, // 上级权限id
+              name: item.name, // 权限名称
+              status: item.status, // 是否启用
+              frontpath: item.frontpath, // 对应前端路由路径（menu为1且rule_id>0时必填）
+              desc: item.desc, // 端路由路径别名（menu为1时必填）
+              condition: item.condition, // 后端规则 （menu为0时必填）
+              icon: item.icon,
+              method: item.method, // 请求方式 （menu为0时必填）
+              order: 50, // 排序
+            };
+
+            this.dialogId = item.id;
+          }
+
           break;
       }
       this.dialogVisible = true;
@@ -649,14 +721,14 @@ export default {
       this.dialogVisible = false;
     },
 
-    // // 模态框
-    // handleClose(done) {
-    //   this.$confirm("确认关闭？")
-    //     .then((_) => {
-    //       done();
-    //     })
-    //     .catch((_) => {});
-    // },
+    // 关闭提示
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          done();
+        })
+        .catch((_) => {});
+    },
 
     // // 显示/隐藏
     // showOrHide(data) {
@@ -710,6 +782,49 @@ export default {
           });
         })
         .catch(() => {});
+    },
+
+    // 打开抽屉
+    openDrawer(item) {
+      this.drawer = true;
+      this.drawerLoading = true;
+      this.axios
+        .get("/admin/rule/1", { token: true })
+        .then((res) => {
+          this.drawerList = res.data.data.list;
+          this.checkedKeys = item.rules.map((item) => item.id);
+          this.drawerId = item.id;
+          this.drawerLoading = false;
+        })
+        .catch((err) => {
+          this.drawerLoading = false;
+        });
+    },
+
+    // tree 复选框被点击的时候触发
+    check(...e) {
+      this.checkedKeys = e[1].checkedKeys;
+    },
+
+    submitRules() {
+      this.axios
+        .post(
+          "/admin/role/set_rules",
+          {
+            id: this.drawerId,
+            rule_ids: this.checkedKeys,
+          },
+          { token: true }
+        )
+        .then((res) => {
+          this.drawer = false;
+          this.getList();
+          this.$message({
+            type: "success",
+            message: "配置成功",
+          });
+        })
+        .catch((err) => {});
     },
   },
 };

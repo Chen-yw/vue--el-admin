@@ -34,7 +34,12 @@
           </el-table-column>
           <el-table-column label="操作" align="center" width="150px">
             <template slot-scope="scope">
-              <el-button type="text" size="mini">配置</el-button>
+              <el-button
+                type="text"
+                size="mini"
+                @click="oprnDrawer(scope.row.key)"
+                >配置</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -44,6 +49,7 @@
           <el-form-item label="支付订单">
             <el-input
               type="number"
+              v-model="form.close_order_minute"
               size="mini"
               :min="0"
               style="width: 40%;"
@@ -58,6 +64,7 @@
           <el-form-item label="已发货订单">
             <el-input
               type="number"
+              v-model="form.auto_received_day"
               size="mini"
               :min="0"
               style="width: 40%;"
@@ -72,6 +79,7 @@
           <el-form-item label="已完成订单">
             <el-input
               type="number"
+              v-model="form.after_sale_day"
               size="mini"
               :min="0"
               style="width: 40%;"
@@ -83,7 +91,7 @@
               订单完成后，用户在n天内可以发起售后申请，设置0天不允许申请售后
             </small>
           </el-form-item>
-          <el-form-item label="运费组合策略">
+          <!-- <el-form-item label="运费组合策略">
             <el-select
               v-model="form.region"
               size="mini"
@@ -92,13 +100,34 @@
               <el-option label="区域一" value="shanghai"></el-option>
               <el-option label="区域二" value="beijing"></el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" size="mini">保存</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
+
+    <!-- 支付配置 -->
+    <el-drawer title="配置" :visible.sync="drawer" direction="rtl" size="35%">
+      <div
+        style="position: absolute; top: 52px; left: 0; right: 0; bottom: 0;"
+        v-loading="drawerLoading"
+      >
+        <div
+          style="position: absolute; top: 0;left: 0;right: 0; bottom: 80px; overflow-y: auto;"
+        ></div>
+        <div
+          style="height: 80px; position: absolute; bottom: 0; right: 0; left: 0;"
+          class="border d-flex align-items-center bg-white"
+        >
+          <el-button class="ml-3" @click="drawer = false">取消</el-button>
+          <el-button class="ml-3" type="primary" @click="submit"
+            >确定</el-button
+          >
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -109,26 +138,61 @@ export default {
     return {
       activeName: "first",
       tableData: [
-        {
-          name: "银联卡支付",
-          desc: "该系统支持即时到账接口",
-          src: "http://wxcs.niuteam.cn/addons/NsUnionPay/ico.png",
-        },
+        // {
+        //   name: "银联卡支付",
+        //   desc: "该系统支持即时到账接口",
+        //   src: "http://wxcs.niuteam.cn/addons/NsUnionPay/ico.png",
+        // },
         {
           name: "支付宝支付",
+          key: "alipay",
           desc: "该系统支持即时到账接口",
           src: "http://wxcs.niuteam.cn/addons/NsAlipay/ico.png",
         },
         {
           name: "微信支付",
+          key: "wxpay",
           desc: "该系统支持微信网页支付和扫码支付",
           src: "http://wxcs.niuteam.cn/addons/NsWeixinpay/ico.png",
         },
       ],
       form: {
         region: "",
+        close_order_minute: 0, // 未支付订单自动关闭时间：分钟，0不自动关闭
+        auto_received_day: 0, // 已发货订单自动确认时间：天，0不自动收货
+        after_sale_day: 0, // 已完成订单允许申请售后：天
       },
+      drawer: false, // 抽屉
+      drawerList: [], // 抽屉数据
+      drawerType: "alipay",
+      drawerLoading: false,
+
+      alipay: {
+        app_id: "",
+        ali_public_key: "",
+        private_key: "",
+      }, // 支付宝支付配置
+      wxpay: {
+        app_id: "", // 公众号APPID
+        miniapp_id: "", // 小程序APPID
+        secret: "", // 小程序secret
+        appid: "", // appid
+        mch_id: "", // 商户号
+        key: "", // API 密钥
+        cert_client: "",
+        cert_key: "",
+      }, // 微信支付配置
     };
+  },
+  methods: {
+    // 打开模态框
+    oprnDrawer(key) {
+      this.drawerType = key;
+      this.drawer = true;
+    },
+
+    // 提交配置
+    submit() {},
   },
 };
 </script>
